@@ -19,6 +19,7 @@ import FirebaseMessaging
 import EventKit
 import Alamofire
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDelegate,UITabBarControllerDelegate {
     
@@ -32,7 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     let btnAccount: UIButton = UIButton()
     var LastTabSelected : Int = 0
     let indexVal: NSInteger = NSInteger()
-    
     let img_Location :UIImageView = UIImageView()
     let img_Scranner :UIImageView = UIImageView()
     let img_Account :UIImageView = UIImageView()
@@ -41,13 +41,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     let imgMain_Account :UIImageView = UIImageView()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+        // Override point for customization after application launch.
+        //FirebaseApp.configure()
+        print(launchOptions)
         checkVersion()
-       
         STPPaymentConfiguration.shared().publishableKey = EndPoints.strip_key
         DropDown.startListeningToKeyboard()
         IQKeyboardManager.shared().isEnabled = true
-        
         FontSetup()
         
         //Notification
@@ -61,10 +61,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         
         let storyboard = UIStoryboard(name: storyboardName, bundle: Bundle.main)
         let obj : AnyObject! = UserDefaults.standard.object(forKey: "userid") as AnyObject!
-        
         if (obj != nil ){
+            
             let userID : String = UserDefaults.standard.value(forKey: "userid") as! String
             let TokenUser : String = UserDefaults.standard.value(forKey: "token") as! String
+            
             if userID != "" {
                 LoginUserId = userID
                 LoginToken = TokenUser
@@ -80,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                     appDelegate.window?.rootViewController = appDelegate.TabbarCustomMain
                 }
             }
-        }else{
+        } else {
             let Navigtion = storyboard.instantiateViewController(withIdentifier: "Navigtioncontroller") as! UINavigationController
             appDelegate.window?.rootViewController = Navigtion
         }
@@ -94,9 +95,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             let remotnotif = launchOptions![UIApplicationLaunchOptionsKey.remoteNotification] as? NSDictionary
             if remotnotif != nil {
                 let itemName : NSDictionary = remotnotif!["aps"] as! NSDictionary
+                print(itemName)
                 return true
             }
         }
+        
         return false
     }
     
@@ -104,14 +107,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     func printFonts() {
         let fontFamilyNames = UIFont.familyNames
         for familyName in fontFamilyNames {
+            print("------------------------------")
+            print("Font Family Name = [\(familyName)]")
             let names = UIFont.fontNames(forFamilyName: familyName )
+            print("Font Names = [\(names)]")
         }
     }
     
     func FontSetup(){
+        print("\(UIDevice().type)")
+        //        "iPhone7,2" : ,
+        //        "iPhone8,1" : .iPhone6S,
+        //        "iPhone8,2" : .iPhone6Splus,
         let device : Model = UIDevice().type
         
+        
         if device == .iPhone5S ||  device == .iPhone5 || device == .iPhoneSE || device == .iPhone5C {
+            
+            print(" in >>>\(UIDevice().type)")
+            
             FontNormal10  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 9.0)!
             FontNormal11  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 10.0)!
             FontNormal12  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 11.0)!
@@ -155,11 +169,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             Font2Bold25 = UIFont(name:  AppFontName.Lato.LatoBold, size: 20.0)!
             Font2Bold24  = UIFont(name:  AppFontName.Lato.LatoBold, size:16.0)!
             Font2Bold36  = UIFont(name:  AppFontName.Lato.LatoBold, size: 33.0)!
+            
         }
-        
         if device == .iPhone6S || device == .iPhone6 ||  device == .iPhone7 || device == .iPhone8 {
             
+            print(" no need to setup  in >>>\(UIDevice().type)")
             //iphone 6
+            // AppFontName.Lato.LatoRegular
             FontNormal10  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 10.0)!
             FontNormal11  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 11.0)!
             FontNormal12  = UIFont(name:  AppFontName.Lato.LatoRegular, size: 12.0)!
@@ -292,9 +308,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         let prm:Parameters  = ["version":appVersion ,
                                "os": "iPhone"
         ]
-        
+        print(prm)
         MasterWebService.sharedInstance.POST_webservice(Url: EndPoints.User_CheckVersion_URL, prm: prm,  background: true,completion: { _result,_statusCode in
+            print(_result)
+            
             if _statusCode == 200 {
+                
                 if _result is NSDictionary {
                     print("dict")
                     print(_result)
@@ -304,7 +323,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                     if status == 1 {
                         
                     }else{
+                        
                         let logOutAlert = UIAlertController(title: "Message", message: message, preferredStyle: UIAlertControllerStyle.alert)
+                        
                         logOutAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
                             if let url = URL(string: "itms-apps://itunes.apple.com/us/app/green-grubbox/id1343808215?ls=1&mt=8"),
                                 UIApplication.shared.canOpenURL(url)
@@ -345,7 +366,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     //MARK: Firebase remote notification Handler
-    // The callback to handle data message received via FCM for devices running iOS 10 or above.
     func application(received remoteMessage: MessagingRemoteMessage) {
         print(remoteMessage.appData)
     }
@@ -358,28 +378,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                 if (granted)
                 {
                     UIApplication.shared.registerForRemoteNotifications()
-                } else {
-                    
+                }
+                else{
+                    //Do stuff if unsuccessful...
                 }
             })
-        } else { //If user is not on iOS 10 use the old methods we've been using
+        } else {
+            //If user is not on iOS 10 use the old methods we've been using
             let notificationSettings = UIUserNotificationSettings(types: [UIUserNotificationType.badge, UIUserNotificationType.sound, UIUserNotificationType.alert], categories: nil)
             application.registerUserNotificationSettings(notificationSettings)
         }
+        
         FirebaseApp.configure() // fire base configrations
     }
     
     //MARK: Delegate Methods For Push Notification
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Messaging.messaging().apnsToken = deviceToken
-        DeviceToken = Messaging.messaging().fcmToken!
-        print("InstanceID token: \(DeviceToken)")
-        UserDefaults.standard.set(DeviceToken, forKey: "deviceToken")
-        
+        var token: String = ""
+        for i in 0..<deviceToken.count {
+            token += String(format: "%02.2hhx", deviceToken[i] as CVarArg)
+        }
+        print(token)
+        DeviceToken = token
+        UserDefaults.standard.set(token, forKey: "deviceToken")
+        if let refreshedToken = InstanceID.instanceID().token() { print("InstanceID token: \(refreshedToken)")
+            DeviceToken = Messaging.messaging().fcmToken!
+            UserDefaults.standard.set(DeviceToken, forKey: "deviceToken")
+        }
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error){
-        
+        print("Device token not available in simulator \(error)")
     }
     
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
@@ -396,10 +425,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             }
         }
     }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+        // Print full message.
+        print(userInfo)
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Print message ID.
+        print(userInfo)
         if appDelegate.TabbarCustomMain != nil {
             // if application.
             let state = UIApplication.shared.applicationState
@@ -412,11 +446,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             }else{
                 
             }
-        }else {
+        } else {
             
         }
         completionHandler(UIBackgroundFetchResult.newData)
     }
+    
     
     //MARK: OTher global funtions
     func uicolorFromHex(rgbValue:UInt32)->UIColor
@@ -427,18 +462,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         return UIColor(red:red, green:green, blue:blue, alpha:1.0)
     }
     
-    //MARK: Validations
-    // validation for password
+    //MARK: validation for password
     func isValidPassword(password: String) -> Bool
     {
+        //let passwordRegex  = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{3,32}"
         let passwordRegex  = "^.{6,32}"
         let passwordTest = NSPredicate(format:"SELF MATCHES %@", passwordRegex)
         return passwordTest.evaluate(with: password)
+        
     }
     
-    // validation for email
+    //MARK: alidation for email
     func isValidEmail(testStr:String) -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,50}"
+        
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         return emailTest.evaluate(with: testStr)
     }
@@ -578,6 +615,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     func BoardercolorOfView(sender: UIView,color : UIColor,borderWidth: CGFloat,cornerRadius: CGFloat){
+        // Border
         sender.layer.masksToBounds = true
         sender.layer.cornerRadius = cornerRadius
         sender.layer.borderColor = color.cgColor

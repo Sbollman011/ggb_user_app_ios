@@ -8,7 +8,6 @@
 
 import UIKit
 import Alamofire
-
 class SignUpVC: UIViewController {
     
     @IBOutlet weak var popViewForSignUp: UIView!
@@ -39,23 +38,22 @@ class SignUpVC: UIViewController {
         btnForCorporate.setTitle("CORPORATE", for: .selected)
         btnForIndividual.setTitle("INDIVIDUAL", for: .normal)
         btnForIndividual.setTitle("INDIVIDUAL", for: .selected)
-        
         img_btncorporate.image = UIImage(named: "select_signup")
         img_btnIndividual.image = UIImage(named: "select_signup")
+        
         img_btnIndividual.image = UIImage(named: "unselect_signup")
         img_btncorporate.image = UIImage(named: "select_signup")
         
         fontsetup()
     }
     
+    //MARK: Set Font
     func fontsetup(){
         lbl_title.font = FontBold18
         lbl_email.font = Font2Bold11
         lbl_Password.font = Font2Bold11
         lbl_re_password.font = Font2Bold11
-        
         btnLogin.titleLabel?.font = FontBold15
-        
         btnForIndividual.titleLabel?.font  = FontBold10
         btnForCorporate.titleLabel?.font  =  FontBold10
     }
@@ -66,6 +64,7 @@ class SignUpVC: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     var accountType : String = "1"
@@ -96,7 +95,6 @@ class SignUpVC: UIViewController {
                 break
             }
         }
-        
         if NavigationPop   == false{
             let Login_vc  = storyboard?.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
             self.navigationController?.pushViewController(Login_vc, animated: true)
@@ -106,12 +104,13 @@ class SignUpVC: UIViewController {
     @IBAction func ActionOnbtnClose(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
-    
+   
     @IBAction func ActionOnbtnContinue(_ sender: UIButton) {
         self.view.endEditing(true)
         if EmailValidate(){
             if PasswordValidate(){
                 self.Signup_service(email: (txtFieldForEmail.text?.condenseWhitespace())!, password: (txtFieldForPassword.text?.condenseWhitespace())!,accountType: accountType)
+                print("call api ")
             }
         }
     }
@@ -155,7 +154,6 @@ class SignUpVC: UIViewController {
     //MARK: Webservice for SignUP
     func Signup_service(email: String,password: String, accountType: String){
         let DeviceBattryLevel : Float = UIDevice.current.batteryLevel
-        
         let prm:Parameters  = [
             "email": email,
             "password": password,
@@ -188,13 +186,15 @@ class SignUpVC: UIViewController {
                         let email: String = data.value(forKey: "email") as! String
                         self.SignUPCompletion(id : email)
                     }
-                }else{
+                } else {
                     self.showErrorToast(message: "Somthing went wrong JSON serialization failed.", backgroundColor: UIColor.red)
                 }
                 if _result is NSArray {
+                    print("array")
                 }
             }else{
                 self.showErrorToast(message: "Somthing went wrong.", backgroundColor: UIColor.red)
+                
             }
         })
     }

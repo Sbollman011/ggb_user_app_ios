@@ -11,7 +11,7 @@ import UIKit
 let Device_MOdel_name : Model = UIDevice().type
 var DeviceSize : CGSize = CGSize()
 var DeviceToken : String = ""
-    //view.frame.size
+//view.frame.size
 let DeviceOSVersion: String = UIDevice.current.systemVersion
 var appDelegate = UIApplication.shared.delegate as! AppDelegate
 var LoginUserId : String = ""
@@ -19,15 +19,14 @@ var LoginToken : String = ""
 var User_Latitute : Double = Double()
 var User_Langitute : Double = Double()
 var isLatestPhase:Bool = false
-struct EndPoints {
-    
+
+struct EndPoints {    
     
     //static let serverPath = "http://52.37.233.101:5000" // Staging
     
-    static let serverPath = "http://api.greengrubbox.com" // Live
+    //static let serverPath = "http://api.greengrubbox.com" // Live
     
-    //static let serverPath = "http://192.168.0.9:5000" // Local
-    
+    static let serverPath = "http://192.168.168.27:5000" // Local
     
     //static let strip_key = "pk_live_Jd6lGHcwAsJj7Dctv1DQDAQ2" // Live
     
@@ -58,7 +57,7 @@ struct AppFontName {
     //Font Family Name = [Lato]
     //Font Names = [["Lato-Bold"]]
     //Font Family Name = [Raleway]
-   // Font Names = [["Raleway-Bold"]]
+    // Font Names = [["Raleway-Bold"]]
     
     static let LatoName = "Lato"
     struct Lato {
@@ -73,7 +72,6 @@ struct AppFontName {
     
     //Mostra Nuova Bold
     //Mostra Nuova Regular
-    
     static let MostraName = "Mostra Nuova"
     struct Mostra {
         static let MostraBold : String = "MostraNuova-Bold"
@@ -82,7 +80,6 @@ struct AppFontName {
 }
 
 //iphone 6
-
 var FontNormal10 : UIFont = UIFont(name:  AppFontName.Lato.LatoRegular, size: 10.0)!
 var FontNormal11 : UIFont = UIFont(name:  AppFontName.Lato.LatoRegular, size: 11.0)!
 var FontNormal12 : UIFont = UIFont(name:  AppFontName.Lato.LatoRegular, size: 12.0)!
@@ -163,4 +160,3 @@ var Font2Bold26 : UIFont = UIFont(name:  AppFontName.Raleway.RalewayBold, size: 
 var Font2Bold27 : UIFont = UIFont(name:  AppFontName.Raleway.RalewayBold, size: 27.0)!
 var Font2Bold28 : UIFont = UIFont(name:  AppFontName.Raleway.RalewayBold, size: 28.0)!
 var Font2Bold36 : UIFont = UIFont(name:  AppFontName.Raleway.RalewayBold, size: 36.0)!
-

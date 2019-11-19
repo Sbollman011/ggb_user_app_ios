@@ -9,7 +9,6 @@
 import UIKit
 import Alamofire
 class CorporateUserVC: UIViewController {
-    
     var userID: String = ""
     @IBOutlet weak var viewForCorporate: UIView!
     @IBOutlet weak var txtFieldForName: UITextField!
@@ -26,6 +25,7 @@ class CorporateUserVC: UIViewController {
         fontSetup()
     }
     
+    //MARK: Set Font
     func fontSetup(){
         lblTitle.font = FontBold18
         lblName.font = Font2Bold11
@@ -35,6 +35,7 @@ class CorporateUserVC: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     @IBAction func ActionOnbtnDone(_ sender: UIButton) {
@@ -44,7 +45,7 @@ class CorporateUserVC: UIViewController {
                 //call pi
                 self.corporate_signUP(userId: userID, name: (txtFieldForName.text?.condenseWhitespace())!, promocode: (txtFieldForPromoCode.text?.condenseWhitespace())!)
             }
-        } else {
+        }else {
             self.showErrorToast(message: "User ID not exist.", backgroundColor: UIColor.red)
         }
     }
@@ -57,7 +58,7 @@ class CorporateUserVC: UIViewController {
             } else {
                 self.showErrorToast(message: "Please enter your Promocode.", backgroundColor: UIColor.red)
             }
-        }else {
+        } else {
             self.showErrorToast(message: "Please enter your Name.", backgroundColor: UIColor.red)
         }
         return false
@@ -65,13 +66,12 @@ class CorporateUserVC: UIViewController {
     
     //MARK: corporate registration api
     func corporate_signUP(userId: String,name: String,promocode: String){
-        
         let prm:Parameters  = ["userId": userId,
                                "name": name,                               
                                "promoCode": promocode]
-        
         let  headers: HTTPHeaders = ["Content-Type": "application/json"]
         MasterWebService.sharedInstance.PUT_WithHeaderCustom_webservice(Url: EndPoints.Complete_registration_URL, prm: prm, header: headers,  background: false,completion: { _result,_statusCode in
+            //   print(_result) as! Any
             if _statusCode == 200 {
                 if _result is NSDictionary {
                     print("dict")
@@ -91,12 +91,13 @@ class CorporateUserVC: UIViewController {
                         UserDefaults.standard.setValue(LoginToken, forKey: "token")
                         self.NavigateToHome()
                     }
-                }else{
+                } else {
                     self.showErrorToast(message: "Somthing went wrong JSON serialization failed.", backgroundColor: UIColor.red)
                 }
                 if _result is NSArray {
+                    print("array")
                 }
-            }else{
+            } else{
                 self.showErrorToast(message: "Somthing went wrong.", backgroundColor: UIColor.red)
             }
         })

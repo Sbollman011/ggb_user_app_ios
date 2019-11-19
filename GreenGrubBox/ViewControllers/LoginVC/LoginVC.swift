@@ -25,6 +25,7 @@ class LoginVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+        
         self.loginPopView.layer.cornerRadius = 5.0
         self.loginPopView.clipsToBounds = true
         fontSetup()
@@ -36,16 +37,19 @@ class LoginVC: UIViewController {
         lbl_password.font = Font2Bold11
         btnLogin.titleLabel?.font = FontBold15
     }
-    
+        
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     @IBAction func tappedTo(_ sender: Any) {
         var NavigationPop : Bool = false
+        
         for nav in (self.navigationController?.viewControllers)! {
             if nav is SignUpVC {
                 NavigationPop = true
+                
                 let transition = CATransition()
                 transition.duration = 0.5
                 transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -53,13 +57,15 @@ class LoginVC: UIViewController {
                 transition.subtype = kCATransitionFromRight
                 self.navigationController?.view.layer.add(transition, forKey: nil)
                 self.navigationController?.popToViewController(nav, animated: false)
+                
                 break
             }
         }
         
         if NavigationPop == false {
-            let SignUp_vc  = storyboard?.instantiateViewController(withIdentifier: "SignUpVC") as! SignUpVC
-            self.navigationController?.pushViewController(SignUp_vc, animated: true)
+        
+        let SignUp_vc  = storyboard?.instantiateViewController(withIdentifier: "SignUpVC") as! SignUpVC
+        self.navigationController?.pushViewController(SignUp_vc, animated: true)
         }
     }
     
@@ -68,38 +74,44 @@ class LoginVC: UIViewController {
         if EmailValidate(){
             if PasswordValidate(){
                 login_service(email: (txtForEmail.text?.condenseWhitespace())!, Password: (txtFieldForPassword.text?.condenseWhitespace())!)
+                print("call api ")
             }
         }
     }
     
     @IBAction func ActionOnbtnForgetPassword(_ sender: UIButton) {
-        ForgetPasswordView().AddForgetPopUp(callback: {
+       ForgetPasswordView().AddForgetPopUp(callback: {
             (Email, bool) in
             print(Email ?? "nul", bool ?? "nul")
             if bool!{
+                print("submit  tapped")
                 self.ForgotPassword_service(email: Email!)
+
             }else {
+                print("close tapped")
                 if Email != "" {
-                    self.showErrorToast(message: Email!, backgroundColor: UIColor.red)
+                self.showErrorToast(message: Email!, backgroundColor: UIColor.red)
                 }
             }
         })
     }
     
+    //MARK: Email varification
     func EmailValidate() -> Bool{
         if txtForEmail.text?.condenseWhitespace() != "" {
             if appDelegate.isValidEmail(testStr: (txtForEmail.text?.condenseWhitespace())!)
             {
                 return true
             }else {
-                self.showErrorToast(message: "Please enter valid email address.", backgroundColor: UIColor.red)
+                 self.showErrorToast(message: "Please enter valid email address.", backgroundColor: UIColor.red)
             }
         }else {
-            self.showErrorToast(message: "Please enter email address.", backgroundColor: UIColor.red)
+             self.showErrorToast(message: "Please enter email address.", backgroundColor: UIColor.red)
         }
         return false
     }
     
+    //MARK: Password varification
     func PasswordValidate() -> Bool{
         if txtFieldForPassword.text?.condenseWhitespace() != "" {
             let pasword : String = (txtFieldForPassword.text?.condenseWhitespace())!
@@ -108,19 +120,19 @@ class LoginVC: UIViewController {
             }else {
                 self.showErrorToast(message: "Password should be minimum 5 characters.", backgroundColor: UIColor.red)
             }
-        }else {
+        } else {
             self.showErrorToast(message: "Please enter password.", backgroundColor: UIColor.red)
         }
         return false
     }
     
+    //MARK: Action Close
     @IBAction func ActionOnbtnClose(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    //MARK: webservice callling setup etc
+
+    //MARK: webservice Login
     func login_service(email: String , Password: String){
-        
         let DeviceBattryLevel : Float = UIDevice.current.batteryLevel
         let prm:Parameters  = [
             "email": email,
@@ -136,9 +148,9 @@ class LoginVC: UIViewController {
                 "battery": DeviceBattryLevel
             ]
         ]
-
+        print(prm)
         MasterWebService.sharedInstance.POST_webservice(Url: EndPoints.Login_URL, prm: prm, background: false,completion: { _result,_statusCode in
-            
+            //   print(_result) as! Any
             if _statusCode == 200 {
                 if _result is NSDictionary {
                     print("dict")
@@ -150,24 +162,35 @@ class LoginVC: UIViewController {
                         self.showErrorToast(message: "\(message)", backgroundColor: UIColor.red)
                     }else  if status == 1 {
                         let data : NSDictionary = Responsedata.value(forKey: "data") as! NSDictionary
-                        let isRenewRequire : Int =  data.value(forKey: "isRenewRequire") as! Int
+                        
+                        let isRenewRequire : Int =  data.value(forKey: "isRenewRequire") as! In
                         let id : String = data.value(forKey: "_id") as! String
+                        // let email : String = data.value(forKey: "email") as! String
                         LoginUserId = id
                         UserDefaults.standard.setValue(LoginUserId, forKey: "userid")
                         let t : String = Responsedata.value(forKey: "token") as! String
                         LoginToken = t
                         UserDefaults.standard.setValue(LoginToken, forKey: "token")
+                        
                         appDelegate.createCustomTabBar()
                         appDelegate.window?.rootViewController = appDelegate.TabbarCustomMain
+                        
+                        //  }
                         if isRenewRequire == 1 {
                             let message : String = Responsedata.value(forKey: "message") as! String
                             self.promtMsg(msg: message, color:UIColor.black)
                         }
+                        let KeyRSA : String = Responsedata.value(forKey: "rsaPublicKey") as! String
+                        UserDefaults.standard.setValue(KeyRSA, forKey: "rsaPublicKey")
+                        
                     }else  if status == 2 {
                         //Individual screen
                         let data : NSDictionary = Responsedata.value(forKey: "data") as! NSDictionary
                         let id : String = data.value(forKey: "_id") as! String
                         self.SignUPCompletion(accountType: "1", id: id)
+                        
+                        let KeyRSA : String = Responsedata.value(forKey: "rsaPublicKey") as! String
+                        UserDefaults.standard.setValue(KeyRSA, forKey: "rsaPublicKey")
                     }else  if status == 3 || status == 4 {
                         //Verify OTP
                         if status == 3{
@@ -190,6 +213,7 @@ class LoginVC: UIViewController {
         })
     }
     
+    //MARK: Show Message
     func promtMsg(msg:String,color:UIColor){
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
@@ -197,13 +221,17 @@ class LoginVC: UIViewController {
             }
             topController.showErrorToast(message: msg , duration: 2000, backgroundColor: color)
         }
+        
     }
     
+    //MARK: webservice Fogot Password
     func ForgotPassword_service(email: String ){
         let prm:Parameters  = ["email": email]
         print(prm)
         MasterWebService.sharedInstance.POST_webservice(Url: EndPoints.ForgotPassword_URL, prm: prm, background: false,completion: { _result,_statusCode in
             if _statusCode == 200 {
+                print("JSON serialization failed")
+                
                 if _result is NSDictionary {
                     print("dict")
                     print(_result)
@@ -213,13 +241,17 @@ class LoginVC: UIViewController {
                         let message : String = Responsedata.value(forKey: "message") as! String
                         self.showErrorToast(message: "\(message)", backgroundColor: UIColor.red)
                     }else  if status == 1 {
+                       
                         let message : String = Responsedata.value(forKey: "message") as! String
                         self.showErrorToast(message: "\(message)", backgroundColor: UIColor.green)
+                        
                     }
-                }else{
+                }else
+                {
                     self.showErrorToast(message: "Somthing went wrong JSON serialization failed.", backgroundColor: UIColor.red)
                 }
                 if _result is NSArray {
+                    print("array")
                 }
             }else{
                 self.showErrorToast(message: "Somthing went wrong.", backgroundColor: UIColor.red)
@@ -234,6 +266,7 @@ class LoginVC: UIViewController {
             let Individual_vc  = storyboard?.instantiateViewController(withIdentifier: "IndividualUserVC") as! IndividualUserVC
             Individual_vc.userID  = id
             self.navigationController?.pushViewController(Individual_vc, animated: true)
+            
         }else if accountType == "2" {
             //corporate
             let Corporate_vc  = storyboard?.instantiateViewController(withIdentifier: "CorporateUserVC") as! CorporateUserVC
@@ -241,7 +274,8 @@ class LoginVC: UIViewController {
             self.navigationController?.pushViewController(Corporate_vc, animated: true)
         }
     }
-    
+
+    //MARK: Move to Verifiy Pin
     func verifyCompletion(email: String){
         let objVerifyPinVC  = storyboard?.instantiateViewController(withIdentifier: "VerifyPinVC") as! VerifyPinVC
         objVerifyPinVC.email = email

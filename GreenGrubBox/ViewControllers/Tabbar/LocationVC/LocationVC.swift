@@ -13,7 +13,6 @@ import Alamofire
 import SDWebImage
 
 class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLocationManagerDelegate,UITableViewDelegate,UITableViewDataSource {
-    
     @IBOutlet weak var View_table: UIView!
     @IBOutlet weak var tbl_vendors: UITableView!
     
@@ -60,7 +59,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         txt_search.delegate = self
         self.txt_search.addTarget(self, action: #selector(LocationVC.textFieldDidChange(_:)), for: UIControlEvents.editingChanged)
         
-        // Do any additional setup after loading the view.
         view_searchbox.layer.cornerRadius = 5
         view_searchbox.layer.masksToBounds = true
         view_searchbox.layer.borderColor = UIColor.white.cgColor
@@ -71,7 +69,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         tbl_vendors.register(UINib(nibName: "VendorCell", bundle: nil), forCellReuseIdentifier: "VendorCell")
         
         self.locationManager.requestAlwaysAuthorization()
-        
         // For use in foreground
         self.locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
@@ -83,7 +80,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         
         self.Map.delegate = self
         fontSetup()
-        
         // Pull to refresh
         refreshControl.tintColor = appDelegate.uicolorFromHex(rgbValue: 0x7CD141)
         self.tbl_vendors.addSubview(self.refreshControl)
@@ -97,6 +93,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     }
     
     @objc func callback() {
+        print("done")
         self.User_HomeVendorsList(callInBG:false )
     }
     
@@ -107,12 +104,13 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
         if Onslider == true  {
             Onslider = false
-        }else {
+        } else {
             self.vendorsArray.removeAll()
             self.Search_vendorsArray.removeAll()
             
             Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(callback), userInfo: nil, repeats: false)
         }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: Notification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: Notification.Name.UIKeyboardWillShow, object: nil)
     }
@@ -125,9 +123,11 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         let keyboardHeight = keyboardRectangle.height
         print("keyboad notificaiton",keyboardFrame,keyboardHeight)
         constraint_tblbottom.constant = keyboardHeight
+        // do whatever you want with this keyboard height
     }
     
     @objc func keyboardWillHide(notification: Notification) {
+        // keyboard is dismissed/hidden from the screen
         constraint_tblbottom.constant = 70
     }
     
@@ -154,7 +154,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         Map.isHidden = false
         self.view.bringSubview(toFront: Map)
         txt_search.text = ""
-        
         searchenable = false
     }
     
@@ -172,9 +171,9 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         img_MenuBtn.image = UIImage(named:"Home_menu")
         constantFromLocationBtn.isActive = true
     }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     //MARK: Actions on outlets
@@ -182,33 +181,36 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
+                print("No access")
                 self.askForPermission()
                 return
             case .authorizedAlways, .authorizedWhenInUse:
+                print("Access")
                 let center = CLLocationCoordinate2D(latitude: User_Latitute, longitude: User_Langitute)
+                
                 let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))
                 self.Map.setRegion(region, animated: true)
             }
         } else {
             askForPermission()
+            print("Location services are not enabled")
         }
     }
     
     func askForPermission(){
         let alert = UIAlertController(title: "Location Services Disabled", message: "Please enable Location Services in Settings", preferredStyle: .alert)
-        
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
-        
         present(alert, animated: true, completion: nil)
     }
+    
     @IBAction func ActionOnbtnMenu(_ sender: Any) {
         
         if popUpVisible{
             RemovePopUp()
         }
-        
         if  View_table.isHidden{
+            // constraint_leadingSearchBox.constant =  10
             constraint_leadingSearchBox.isActive = true
             img_MenuBtn.image = UIImage(named:"list_btn_icon")
             constantFromLocationBtn.isActive = false
@@ -218,6 +220,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             View_table.backgroundColor = UIColor.white
             self.view.bringSubview(toFront: View_table)
         }else {
+            //constraint_leadingSearchBox.constant =  cosntratinrecord
             constraint_leadingSearchBox.isActive = false
             img_MenuBtn.image = UIImage(named:"Home_menu")
             constantFromLocationBtn.isActive = true
@@ -232,6 +235,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     }
     
     func showListView(){
+        
     }
     
     @IBAction func ActionOnbtnVender(_ sender: UIButton) {
@@ -254,6 +258,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             btn_Vender.isSelected = true
             btn_DropBox.isSelected = false
             btn_Both.isSelected = false
+            //hide bottom label
             lbl_Vender.isHidden = false
             lbl_Dropbox.isHidden = true
             lbl_Both.isHidden = true
@@ -263,6 +268,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             btn_Vender.isSelected = false
             btn_DropBox.isSelected = true
             btn_Both.isSelected = false
+            //hide bottom label
             lbl_Vender.isHidden = true
             lbl_Dropbox.isHidden = false
             lbl_Both.isHidden = true
@@ -272,6 +278,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             btn_Vender.isSelected = false
             btn_DropBox.isSelected = false
             btn_Both.isSelected = true
+            //hide bottom label
             lbl_Vender.isHidden = true
             lbl_Dropbox.isHidden = true
             lbl_Both.isHidden = false
@@ -281,6 +288,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             btn_Vender.isSelected = true
             btn_DropBox.isSelected = false
             btn_Both.isSelected = false
+            //hide bottom label
             lbl_Vender.isHidden = false
             lbl_Dropbox.isHidden = true
             lbl_Both.isHidden = true
@@ -296,7 +304,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         self.vendorsArray.removeAll()
         self.tbl_vendors.reloadData()
         User_HomeVendorsList(callInBG: false)
-        
         if popUpVisible{
             RemovePopUp()
         }
@@ -305,7 +312,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     //MARK: UITextField delegate
     var Searchtimer: Timer?
     @objc func textFieldDidChange(_ textField:UITextField){
-        
         let searchTextString : NSString! = textField.text as NSString!
         if ((searchTextString.length  > 0 || searchTextString != nil || searchTextString == "") == true)
         {
@@ -331,12 +337,13 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool // return NO to disallow editing.
     {
-      return true
+        return true
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) // became first responder
     {
         RemovePopUp()
+        //constraint_leadingSearchBox.constant =  10
         constraint_leadingSearchBox.isActive = true
         img_MenuBtn.image = UIImage(named:"list_btn_icon")
         constantFromLocationBtn.isActive = false
@@ -356,6 +363,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     func textFieldDidEndEditing(_ textField: UITextField) // may be called if forced even if shouldEndEditing returns NO (e.g. view removed from window) or endEditing:YES called
     {
         if   View_table.isHidden {
+            //constraint_leadingSearchBox.constant =  cosntratinrecord
             constraint_leadingSearchBox.isActive = false
             img_MenuBtn.image = UIImage(named:"Home_menu")
             constantFromLocationBtn.isActive = true
@@ -379,8 +387,8 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     {
         return true
     }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool // called when 'return' key pressed. return NO to ignore.
+        
     {
         return  false
     }
@@ -403,11 +411,12 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         if searchenable {
             if Search_vendorsArray.count != 0 {
                 cell.lbl_name.text =  Search_vendorsArray[indexPath.row].Name
-                var img : String =  ""
+                var img : String =  "" //Search_vendorsArray[indexPath.row].vendorIcon
                 let imgArr = Search_vendorsArray[indexPath.row].Images
                 if imgArr.count > 0 {
                     img = imgArr[0] as String
                 }
+                
                 if img != "" {
                     let url = URL.init(string:img)
                     cell.img_vendor.sd_setImage(with: url , placeholderImage: UIImage(named: "popUp_default_user.png"))
@@ -426,8 +435,10 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                     }
                 }
             }else{
+                print("blank  data but Search_vendorsArray array called")
             }
         } else {
+            print("searchenable",searchenable,"array count",vendorsArray.count,"index path",indexPath.row)
             if vendorsArray.count != 0 {
                 cell.lbl_name.text =  vendorsArray[indexPath.row].Name
                 var img : String = ""
@@ -435,10 +446,12 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                 if imgArr.count > 0 {
                     img = imgArr[0] as String
                 }
+                
                 if img != "" {
                     let url = URL.init(string:img)
                     cell.img_vendor.sd_setImage(with: url , placeholderImage: UIImage(named: "popUp_default_user.png"))
                 }
+                print("myIMG >>>>>>>> " + img)
                 cell.lbl_type.text =   vendorsArray[indexPath.row].category
                 cell.lbl_distance.text =  vendorsArray[indexPath.row].miles
                 cell.img_vendor.layer.cornerRadius =   cell.img_vendor.frame.height / 2
@@ -453,6 +466,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                     }
                 }
             }else {
+                print("blank  data but vendorsArray array called")
             }
         }
         return cell
@@ -469,13 +483,17 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         print(indexPath.row)
         print(searchenable)
         if searchenable  == true {
+            print("search true")
             self.ShowSelectedPopUP(data:Search_vendorsArray[indexPath.row], Formap: false)
         }else {
+            
+            print("search false")
             self.ShowSelectedPopUP(data:vendorsArray[indexPath.row], Formap: false)
         }
     }
     
     @objc func WebTaped(){
+        print("LOcationvc WebTaped",PickerD_data.webLink)
         if PickerD_data.webLink != "" {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(NSURL(string:PickerD_data.webLink)! as URL)
@@ -487,11 +505,12 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     
     @objc func YelpTaped(){
         print("LOcationvc YelpTaped",PickerD_data.yelpLink)
+        
         if PickerD_data.yelpLink != "" {
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(NSURL(string:PickerD_data.yelpLink)! as URL)
             } else {
-                
+                // Fallback on earlier versions
             }
         }
     }
@@ -514,6 +533,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     var PicArrayOFpopUP: [String] = []
     var Onslider : Bool = false
     @objc func PopMainImageSelection(){
+        print("image tapped")
         if PicArrayOFpopUP.count != 0 {
             let slidervc : SliderMediaVC = storyboard?.instantiateViewController(withIdentifier: "SliderMediaVC") as! SliderMediaVC
             slidervc.PictureMedia = PicArrayOFpopUP
@@ -521,6 +541,8 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             Onslider = true
             self.present(slidervc, animated: true, completion: nil)
         }else {
+            
+            print("no image in array")
         }
     }
     
@@ -538,6 +560,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     }
     
     var upldate_UserMap : Bool = false
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Errors " + error.localizedDescription)
     }
@@ -593,6 +616,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         }
     }
     
+    
     func LoadMore(){
         if isMore == true
         {
@@ -618,6 +642,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             User_HomeVendorsList(callInBG:true)
         }
     }
+    
     // MARK:pull to refresh
     @objc func handleRefresh(refreshControl: UIRefreshControl) {
         PullToRefresh()
@@ -627,9 +652,10 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
     func User_HomeVendorsList(callInBG:Bool){
         let  headers: HTTPHeaders = ["Content-Type": "application/json","authorization": LoginToken]
         print(headers)
+        
         print("Request URL : ",EndPoints.User_Vendors_URL + "?currentPage=\(currentPage)&pageSize=\(PageSize)&lat=\(User_Latitute)&long=\(User_Langitute)&type=\(Categories)");
+        
         MasterWebService.sharedInstance.GET_WithHeaderCustom_webservice(Url:  EndPoints.User_Vendors_URL + "?currentPage=\(currentPage)&pageSize=\(PageSize)&lat=\(User_Latitute)&long=\(User_Langitute)&type=\(Categories)" , prm: nil ,header: headers,background:callInBG,completion: {_result,_statusCode in
-            
             if _statusCode == 200 {
                 if _result is NSDictionary {
                     print("dict")
@@ -641,8 +667,6 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                         let message : String = Responsedata.value(forKey: "message") as! String
                         self.showAlert(withTitle: "Message", message:  "\(message)")
                     }else if status == 1 {
-                        //print("Vendors response >>>>>>",Responsedata)
-                        
                         if Responsedata.value(forKey: "isMore") != nil {
                             self.isMore = Responsedata.value(forKey: "isMore")  as! Bool
                         }else {
@@ -656,7 +680,8 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                         }
                         self.ShowOverMap()
                     }
-                }else{
+                }else
+                {
                     self.showAlert(withTitle: "Message", message: "Somthing went wrong JSON serialization failed.")
                 }
                 if _result is NSArray {
@@ -674,6 +699,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
         print(headers)
         print("ravi is here " + SearchText)
         print("Request Final URL after search : "+EndPoints.User_Vendors_URL + "?currentPage=\(currentPage)&pageSize=\(PageSize)&search=" + SearchText + "&lat=\(User_Latitute)&long=\(User_Langitute)&type=\(Categories)")
+        
         MasterWebService.sharedInstance.GET_WithHeaderCustom_webservice(Url:  EndPoints.User_Vendors_URL + "?currentPage=\(currentPage)&pageSize=\(PageSize)&search=" + SearchText + "&lat=\(User_Latitute)&long=\(User_Langitute)&type=\(Categories)" , prm: nil ,header: headers,background:false,completion: {_result,_statusCode in
             if _statusCode == 200 {
                 if _result is NSDictionary {
@@ -698,7 +724,7 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
                         }
                         self.tbl_vendors.reloadData()
                     }
-                }else{
+                } else {
                     self.showAlert(withTitle: "Message", message: "Somthing went wrong JSON serialization failed.")
                 }
                 if _result is NSArray {
@@ -722,6 +748,8 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             name = i.businessName
             long = (i.geo?.coordinates[0])!
             lat = (i.geo?.coordinates[1])!
+            
+            print("name >>>>>",name,"location",lat,long)
             let sikkim = Location(title: name, coordinate: CLLocationCoordinate2D(latitude:lat, longitude:long), tag: 0, infoDict: i.dictionaryRepresentation())
             Map.addAnnotation(sikkim)
         }
@@ -745,15 +773,18 @@ class LocationVC: UIViewController,UITextFieldDelegate, MKMapViewDelegate,CLLoca
             PicArrayOFpopUP = Pindata.Images
             var img: String =  ""
             if Pindata.type == 2 {
+                //img =  Pindata.dropBoxIcon
                 PickerD.HideYelp()
                 PickerD.view_rating.isHidden = true
             }else{
+                //img = Pindata.vendorIcon
                 PickerD.ShowYelp()
             }
             if PicArrayOFpopUP.count > 0 {
                 img  = PicArrayOFpopUP[0] as String
             }
             if img != "" {
+                //PickerD.imgVendor.showImage(urlofimage: img)
                 let url = URL.init(string:img)
                 PickerD.imgVendor.sd_setImage(with: url , placeholderImage: UIImage(named: "popUp_default_user.png"))
                 print(img)

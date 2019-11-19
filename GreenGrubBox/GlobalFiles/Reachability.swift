@@ -71,7 +71,6 @@ public class Reach {
         }, &context)
         SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), RunLoopMode.commonModes as CFString)
     }
-    
 }
 
 extension ReachabilityStatus {

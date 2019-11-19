@@ -14,17 +14,19 @@ class VendorCell: UITableViewCell {
     @IBOutlet weak var lbl_distance: UILabel!
     @IBOutlet weak var lbl_name: UILabel!
     @IBOutlet weak var img_vendor: UIImageView!
-    
     override func awakeFromNib() {
         super.awakeFromNib()
+        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
     }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         img_vendor.image = UIImage(named: "popUp_default_user.png")
     }
+    
 }

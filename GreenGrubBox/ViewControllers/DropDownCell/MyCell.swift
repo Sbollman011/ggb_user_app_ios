@@ -12,5 +12,4 @@ import DropDown
 class MyCell: DropDownCell {
 	
     @IBOutlet weak var suffixLabel: UILabel!
-	
 }

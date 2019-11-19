@@ -8,15 +8,15 @@
 
 import UIKit
 import Alamofire
+
 class BoxHistoryVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet weak var lbl_status: UILabel!
     @IBOutlet weak var tblViewForBoxHistory: UITableView!
-
     var Box_History_Array : [Data_Box] = []
-
-    let refreshControl = UIRefreshControl()
     
+    //Pull to refresh
+    let refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super.viewDidLoad()
         lbl_status.isHidden = true
@@ -37,7 +37,7 @@ class BoxHistoryVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         pageSize = 20
         self.Box_History_service(isCallInBG: false)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -131,7 +131,6 @@ class BoxHistoryVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
                             self.isMore = boxHIstory.isMore
                             self.Box_History_Array =  self.Box_History_Array + boxHIstory.data!
                             self.tblViewForBoxHistory.reloadData()
-                            
                         }else {
                             self.isMore = boxHIstory.isMore
                             self.Box_History_Array =  boxHIstory.data!
@@ -157,7 +156,6 @@ class BoxHistoryVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         }else {
             lbl_status.isHidden = true
         }
-        
     }
     
     // MARK:IB-Action
@@ -165,3 +163,4 @@ class BoxHistoryVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         self.navigationController?.popViewController(animated: true)
     }
 }
+

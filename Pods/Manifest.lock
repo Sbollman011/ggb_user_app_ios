@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.6.0)
+  - CCValidator (1.0.2)
   - Crashlytics (3.10.0):
     - Fabric (~> 1.7.3)
   - DropDown (2.3.1)
@@ -46,6 +47,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.4)
+  - CCValidator
   - Crashlytics
   - DropDown
   - Fabric
@@ -58,8 +60,9 @@ DEPENDENCIES:
   - Toast (~> 4.0.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
+    - CCValidator
     - Crashlytics
     - DropDown
     - Fabric
@@ -79,6 +82,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  CCValidator: 49175409dcd9da1a1bd8d7cc6db31d44a301da84
   Crashlytics: a989ef242b66605577a425733797f810bd2725eb
   DropDown: 20499c7b2731b0d21609af924e47c7677a2be50d
   Fabric: bb495bb9a7a7677c6d03a1f8b83d95bc49b47e41
@@ -96,6 +100,6 @@ SPEC CHECKSUMS:
   Stripe: c1c4828adf3e078fb08ff56cd93f410c54011c54
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 16a00cad0b257791d369d3eaa7f7e7085a61d41a
+PODFILE CHECKSUM: ec38a0b576d6b85d14c18c457f1ebb77f2d5e009
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.3

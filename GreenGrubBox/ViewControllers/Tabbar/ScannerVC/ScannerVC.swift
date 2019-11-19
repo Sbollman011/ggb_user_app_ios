@@ -12,12 +12,10 @@ import AVFoundation
 import AudioToolbox
 import MediaPlayer
 import Alamofire
-
-class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlayerViewControllerDelegate {
+class ScannerVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate, AVPlayerViewControllerDelegate {
     
     var captureSession: AVCaptureSession?
     var videoPreviewLayer: AVCaptureVideoPreviewLayer!
-    
     var isReading: Bool = false
     
     @IBOutlet weak var viewPreview: UIView!
@@ -49,6 +47,7 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                 } else {
                     // User rejected
                     self.camDenied()
+                    //self.navigationController?.popViewController(animated: true)
                 }
             })
         }
@@ -66,7 +65,9 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                 if UIApplication.shared.canOpenURL(URL(string: UIApplicationOpenSettingsURLString)!)
                 {
                     alertText = "It looks like your privacy settings are preventing us from accessing your camera to do barcode scanning. You can fix this by doing the following:\n\n1. Touch the Go button below to open the Settings app.\n\n2. Turn the Camera on.\n\n3. Open this app and try again."
+                    
                     alertButton = "Go"
+                    
                     goAction = UIAlertAction(title: alertButton, style: .default, handler: {(alert: UIAlertAction!) -> Void in
                         if #available(iOS 10.0, *) {
                             UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
@@ -75,6 +76,7 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                         }
                     })
                 }
+                
                 let alert = UIAlertController(title: "Error", message: alertText, preferredStyle: .alert)
                 alert.addAction(goAction)
                 self.present(alert, animated: true, completion: nil)
@@ -99,8 +101,8 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                 AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
                     DispatchQueue.main.async() {
                         self.layerAppear()
-                    }
-                }
+                        
+                    } }
             }
             }
         )
@@ -126,7 +128,6 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
             captureMetadataOutput.setMetadataObjectsDelegate(self as AVCaptureMetadataOutputObjectsDelegate, queue: DispatchQueue.main)
             captureSession?.startRunning()
         } catch let error as NSError {
-            // Handle any errors
             print(error)
         }
     }
@@ -160,8 +161,10 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection){
         for data in metadataObjects {
             let metaData = data
+            // print(metaData.description)
             let transformed = videoPreviewLayer?.transformedMetadataObject(for: metaData) as? AVMetadataMachineReadableCodeObject
             if let unwraped = transformed {
+                print("Data in QR Code >>>>>>>>>", unwraped.stringValue!)
                 self.performSelector(onMainThread: #selector(stopReading), with: nil, waitUntilDone: false)
                 AudioServicesPlaySystemSound(1106);
                 self.CaviarloadingAnimation(Box: unwraped.stringValue!)
@@ -172,8 +175,9 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
-    
+
     //MARK: Animation setup
     var playerLayer =  AVPlayerViewController()
     func CaviarloadingAnimation(Box:String){
@@ -201,7 +205,6 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
             self.view.bringSubview(toFront: View_Animation)
         }
     }
-    
     var BoxID : String = ""
     @objc func playerDidFinishPlaying(notification:NSNotification){
         self.CheckOutWebservice(BoxId: BoxID)
@@ -213,11 +216,10 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
         var localTimeZoneName: String { return TimeZone.current.identifier }
         print(localTimeZoneName)
         let prm:Parameters  = ["boxId": BoxId,"userId": LoginUserId,"lat": "\(User_Latitute)","long": "\(User_Langitute)","timezone":localTimeZoneName]
-        
         let  headers: HTTPHeaders = ["Content-Type": "application/json","authorization": LoginToken]
-        
         MasterWebService.sharedInstance.POST_WithCustomHeader_webservice(Url: EndPoints.Box_checkOut_URL, prm: prm, Header: headers, background: true, completion: { _result,_statusCode in
             if _statusCode == 200 {
+                print("JSON serialization failed")
                 if _result is NSDictionary {
                     print("dict")
                     print(_result)
@@ -229,6 +231,7 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                     }else  if status == 1 {
                         let message : String = Responsedata.value(forKey: "message") as! String
                         var isRenewRequire : Int = 0
+                        
                         if Responsedata.value(forKey: "isRenewRequire") != nil {
                             isRenewRequire = Responsedata.value(forKey: "isRenewRequire") as! Int
                         }
@@ -246,13 +249,14 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                             self.ShowActivity(Message: message,status:status)
                         }
                     }
-                } else {
+                }else
+                {
                     self.showAlert(withTitle: "Message", message:  "Somthing went wrong JSON serialization failed.")
                 }
                 if _result is NSArray {
                     print("array")
                 }
-            }else{
+            } else {
                 self.showAlert(withTitle: "Message", message: "Somthing went wrong.")
             }
         })
@@ -268,8 +272,9 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
         let nav_splaxh_vc  = storyboard?.instantiateViewController(withIdentifier: "Navigtioncontroller") as! UINavigationController
         appDelegate.window?.rootViewController = nav_splaxh_vc
     }
-    
+
     func ShowActivity(Message: String,status:Int){
+        
         let alertController = UIAlertController(title: "Message", message:Message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: {
             alert -> Void in
@@ -277,7 +282,10 @@ class ScannerVC: UIViewController,AVCaptureMetadataOutputObjectsDelegate ,AVPlay
                 self.RemoveAnimation()
                 self.StartScanningProcedure()
             }else if status == 1 {
-                 self.NavigateTOBoxHistory()
+                //                let btn: UIButton = UIButton()
+                //                btn.tag = 0
+                //                appDelegate.tabBarClick(btn)
+                self.NavigateTOBoxHistory()
             }
         }))
         let action = alertController.actions[0]

@@ -13,8 +13,10 @@ import DropDown
 import Stripe
 import PKHUD
 import Toast
+import CCValidator
 
-class MoveToPopup: UIView {
+@available(iOS 10.0, *)
+class MoveToPopup: UIView, UITextFieldDelegate {
     
     var parameters: Parameters?
     
@@ -34,8 +36,10 @@ class MoveToPopup: UIView {
     
     var isVirificationForOTP : Bool = false
     
-    //MARK : - @IBOutlet
+    private var previousTextFieldContent: String?
+    private var previousSelection: UITextRange?
     
+    //MARK : - @IBOutlet
     @IBOutlet weak var viewBase: UIView!
     
     @IBOutlet weak var constraintViewBase: NSLayoutConstraint!
@@ -59,8 +63,13 @@ class MoveToPopup: UIView {
     @IBOutlet weak var txtPromoCode: UITextField!
     
     @IBOutlet weak var viewForMigrateEmail: UIView!
-    @IBOutlet weak var lblEnterEmail: UILabel!    
+    @IBOutlet weak var lblEnterEmail: UILabel!
     @IBOutlet weak var txtEmailEnter: UITextField!
+    
+    @IBOutlet weak var txtCardNo: UITextField!
+    @IBOutlet weak var txtCardExMonth: UITextField!
+    @IBOutlet weak var txtCardExYear: UITextField!
+    @IBOutlet weak var txtCardCVC: UITextField!
     
     
     override open func awakeFromNib() {
@@ -76,7 +85,6 @@ class MoveToPopup: UIView {
         self.setNeedsDisplay()
     }
     
-    // Load Initial View
     open func addDiaLogToView(checkWereToMove: String, callback: @escaping moveToPopupView){
         let window = UIApplication.shared.keyWindow!
         PickerDialog = instanceFromNib() as! MoveToPopup
@@ -96,10 +104,8 @@ class MoveToPopup: UIView {
         }else if checkWereToMove == "Migrate"{
             self.displayViewForMigrateEmail()
         }
-        StripeCardSetup()
     }
     
-    // View Individual
     func displyViewIndividual(){
         PickerDialog.lblTopForHeader.text = "INDIVIDUAL"
         PickerDialog.lblTopForHedarUnder.text = "(for yourself)"
@@ -116,10 +122,14 @@ class MoveToPopup: UIView {
         PickerDialog.viewCardDetails.layer.cornerRadius = 4.0
         PickerDialog.viewCardDetails.layer.masksToBounds = true
         
+        PickerDialog.txtCardNo.delegate = self
+        PickerDialog.txtCardExMonth.delegate = self
+        PickerDialog.txtCardExYear.delegate = self
+        PickerDialog.txtCardCVC.delegate = self
+        
         PickerDialog.lblCardDetails.isHidden = true
     }
     
-    // View Corporate
     func displyviewForCorporate(){
         PickerDialog.lblTopForHeader.text = "CORPORATE"
         PickerDialog.lblTopForHedarUnder.text = "(if you have a code)"
@@ -128,7 +138,6 @@ class MoveToPopup: UIView {
         PickerDialog.viewForCorporate.isHidden = false
     }
     
-    // View Migrate Email
     func displayViewForMigrateEmail(){
         PickerDialog.constraintViewBase.constant = PickerDialog.viewForHeader.frame.size.height + PickerDialog.viewForMigrateEmail.frame.size.height + 40
         PickerDialog.lblTopForHeader.text = "Email Varification"
@@ -138,7 +147,6 @@ class MoveToPopup: UIView {
         PickerDialog.viewForMigrateEmail.isHidden = false
     }
     
-    // View Verifiy OTP
     func displayViewForVerifiyOTP(){
         self.lblTopForHeader.text = "OTP Varification"
         self.lblEnterEmail.text = "Insert the 6 digit pin code sent to your email."
@@ -150,40 +158,21 @@ class MoveToPopup: UIView {
         customDropDown.show()
     }
     
-    //MARK: custom card adding
-    func GetTokenFromStripe(){
-        HUD.show(.progress)
-        STPAPIClient.shared().createToken( withCard: paymentCardTextField.cardParams) { (token: STPToken?, error: Error?) in
-            guard let token = token, error == nil else {
-                // Present error to user...
-                print(error ?? "Nothing")
-                self.showToastMessage(message: (error?.localizedDescription)!)
-                HUD.hide()
-                return
-            }
-            print(token.description)
-            print(token.tokenId)
-            self.CardToken =  token.description
-            HUD.hide()
-            if self.validationForIndividual() {
-                let packageID: String = self.PackageArray[self.packageIndex]._id!
-                self.moveFromMoveTo(moveInTo: "1", cardToken: self.CardToken, name: self.txtName.text!, packgeID: packageID, promoCode: "")
-            }
-        }
-    }
-    
-    // Validation Individual
     func validationForIndividual() -> Bool {
         if txtName.text?.condenseWhitespace() != "" {
             if self.packageSelection == true {
                 let packageID : String = self.PackageArray[packageIndex]._id!
                 if packageID != "" {
-                    if self.paymentCardTextField.isValid {
+                    let isFullCardDataOK = CCValidator.validate(creditCardNumber: txtCardNo.text! as String)
+                    if isFullCardDataOK{
                         return true
-                    }else {
-                        showToastMessage(message: "Please add a valid card details.")
+                    }else{
+                        if txtCardNo.text?.condenseWhitespace() != "" {
+                            showToastMessage(message: "Please add a valid card details.")
+                        }else{
+                            showToastMessage(message: "Please add a card details.")
+                        }
                     }
-                    return true
                 }else {
                     showToastMessage(message: "Please select package.")
                 }
@@ -196,7 +185,6 @@ class MoveToPopup: UIView {
         return false
     }
     
-    // Validation Corporate
     func validateForCorporate() -> Bool{
         if txtCorporateName.text?.condenseWhitespace() != "" {
             if txtPromoCode.text?.condenseWhitespace() != "" {
@@ -214,8 +202,6 @@ class MoveToPopup: UIView {
     func Packages_service(){
         let headers: HTTPHeaders = ["Content-Type": "application/json", "authorization": LoginToken]
         MasterWebService.sharedInstance.GET_WithHeaderCustom_webservice(Url:  EndPoints.package_URL, prm: nil ,header: headers, background:false,completion: {_result,_statusCode in
-            //   print(_result) as! Any
-            
             if _statusCode == 200 {
                 if _result is NSDictionary {
                     print("dict")
@@ -286,24 +272,48 @@ class MoveToPopup: UIView {
     }
     
     var userID: String = ""
-    let paymentCardTextField = STPPaymentCardTextField()
     @IBAction func actionForDoneIndividual(_ sender: Any) {
         if validationForIndividual(){
-            if paymentCardTextField.cardParams.cvc != "" {
-                if paymentCardTextField.isValid {
-                    GetTokenFromStripe()
-                }else {
-                    showToastMessage(message: "Card is not valid.")
-                }
-            }else {
-                showToastMessage(message: "Please enter card details.")
+            if validateYearAndMonthAndCVC(){
+                let dictionary : [String : String] = ["number":txtCardNo.text!,"expMonth":txtCardExMonth.text!,"expYear":txtCardExYear.text!,"cvc":txtCardCVC.text!]
+                let getjsonString = getJsonString(jsonDict: dictionary)
+                self.getJsonData(jsonSrting: getjsonString)
             }
         }
     }
     
+    func validateYearAndMonthAndCVC() -> Bool{
+        if txtCardExMonth.text?.condenseWhitespace() != "" {
+            if txtCardExMonth.text!.count == 2{
+                if txtCardExYear.text?.condenseWhitespace() != "" {
+                    if txtCardExYear.text!.count == 4{
+                        if txtCardCVC.text?.condenseWhitespace() != ""{
+                            if txtCardCVC.text!.count >= 3{
+                                return true
+                            }else{
+                                showToastMessage(message: "Please enter valid card CVC.")
+                            }
+                        }else{
+                            showToastMessage(message: "Please enter card CVC.")
+                        }
+                    }else{
+                        showToastMessage(message: "Please enter valid card expiry year.")
+                    }
+                }else{
+                    showToastMessage(message: "Please enter card expiry year.")
+                }
+            }else{
+                showToastMessage(message: "Please enter valid card expiry month.")
+            }
+        }else{
+            showToastMessage(message: "Please enter card expiry month.")
+        }
+        return false
+    }
+    
     @IBAction func actionForDoneCorporate(_ sender: Any) {
         if self.validateForCorporate(){
-            self.moveFromMoveTo(moveInTo: "2", cardToken: "", name: self.txtCorporateName.text!, packgeID: "", promoCode: txtPromoCode.text!)
+            self.moveFromMoveTo(moveInTo: "2", cardToken: "", name: self.txtCorporateName.text!, packgeID: "", promoCode: txtPromoCode.text!, cardDetail: "")
         }
     }
     
@@ -311,40 +321,13 @@ class MoveToPopup: UIView {
         self.removeFromSuperview()
     }
     
-    func paymentCardTextFieldDidChange(_ textField: STPPaymentCardTextField) {
-        print(textField.isValid)
-        if textField.isValid {
-            self.lblCardDetails.isHidden = false
-            self.lblCardDetails.text = "This card is valid"
-            self.lblCardDetails.textColor = appDelegate.uicolorFromHex(rgbValue: 0x41BC40)
-            self.lblCardDetails.textAlignment = .right
-        } else {
-            self.lblCardDetails.isHidden = false
-            self.lblCardDetails.text = "This card is not valid"
-            self.lblCardDetails.textColor = UIColor.red
-            self.lblCardDetails.textAlignment = .right
-        }
-        if textField.hasText == false {
-            self.lblCardDetails.isHidden = true
-        }
-    }
-    
-    func StripeCardSetup(){
-        for vi in PickerDialog.viewCardDetails.subviews{
-            vi.removeFromSuperview()
-        }
-        PickerDialog.paymentCardTextField.frame = CGRect(x: 0, y: 0, width: PickerDialog.viewCardDetails.frame.width, height: PickerDialog.viewCardDetails.frame.height)
-        PickerDialog.paymentCardTextField.font = FontBold15
-        PickerDialog.paymentCardTextField.delegate = PickerDialog.delegate
-        PickerDialog.viewCardDetails.addSubview(PickerDialog.paymentCardTextField)
-    }
-    
-    func moveFromMoveTo(moveInTo:String, cardToken:String, name:String, packgeID:String, promoCode:String){
+    func moveFromMoveTo(moveInTo:String, cardToken:String, name:String, packgeID:String, promoCode:String, cardDetail:String){
         let prm :Parameters  = ["accountType" : moveInTo,
                                 "cardToken" : cardToken,
                                 "name" : name,
                                 "packageId" : packgeID,
-                                "promoCode" : promoCode]
+                                "promoCode" : promoCode,
+                                "cardDetail":cardDetail]
         MasterWebService.sharedInstance.POST_Authorization_webservice(Url: EndPoints.User_ChangeMembership_URL, prm: prm, authorization: LoginToken, background: false, completion: { _result,_statusCode in
             if _statusCode == 200 {
                 if _result is NSDictionary {
@@ -377,6 +360,24 @@ class MoveToPopup: UIView {
                 self.showToastMessage(message: "Somthing went wrong.")
             }
         })
+    }
+    
+    func getJsonString(jsonDict :[String : String]) -> String{
+        let jsonData = try! JSONSerialization.data(withJSONObject: jsonDict)
+        let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)
+        return jsonString! as String
+    }
+    
+    func getJsonData(jsonSrting: String) {
+        if UserDefaults.standard.object(forKey: "rsaPublicKey") != nil{
+            if let tempNames: String = UserDefaults.standard.object(forKey: "rsaPublicKey") as? String {
+                let serverPublicKey = tempNames
+                let encryptedPassword = RSA.encrypt(string: jsonSrting, publicKey: serverPublicKey)
+                
+                let packageID: String = self.PackageArray[self.packageIndex]._id!
+                self.moveFromMoveTo(moveInTo: "1", cardToken: "", name: self.txtName.text!, packgeID: packageID, promoCode: "", cardDetail: encryptedPassword!)
+            }
+        }
     }
     
     @IBAction func actionOnSubmitEmail(_ sender: Any) {
@@ -461,11 +462,69 @@ class MoveToPopup: UIView {
         style?.titleAlignment = .center
         window.makeToast(message, duration: 2.0, position: CSToastPositionTop , style: style)
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == PickerDialog.txtCardNo{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 16 {
+                return true
+            } else {
+                return false
+            }
+        }else if textField == PickerDialog.txtCardExMonth{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 2 {
+                return true
+            } else {
+                return false
+            }
+        }else if textField == PickerDialog.txtCardExYear || textField == PickerDialog.txtCardCVC{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 4 {
+                return true
+            } else {
+                return false
+            }
+        }else{
+            return false
+        }
+    }
 }
 
 fileprivate extension UIView {
     var firstViewController: UIViewController? {
         let firstViewController = sequence(first: self, next: { $0.next }).first(where: { $0 is UIViewController })
         return firstViewController as? UIViewController
+    }
+}
+
+struct RSA {
+    static func encrypt(string: String, publicKey: String?) -> String? {
+        guard let publicKey = publicKey else { return nil }
+        let keyString = publicKey.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
+        guard let data = Data(base64Encoded: keyString) else { return nil }
+        var attributes: CFDictionary {
+            return [kSecAttrKeyType         : kSecAttrKeyTypeRSA,
+                    kSecAttrKeyClass        : kSecAttrKeyClassPublic,
+                    kSecAttrKeySizeInBits   : 2048,
+                    kSecReturnPersistentRef : kCFBooleanTrue] as CFDictionary
+        }
+        
+        var error: Unmanaged<CFError>? = nil
+        guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
+            
+            return nil
+        }
+        return encrypt(string: string, publicKey: secKey)
+    }
+    static func encrypt(string: String, publicKey: SecKey) -> String? {
+        let buffer = [UInt8](string.utf8)
+        
+        var keySize   = SecKeyGetBlockSize(publicKey)
+        var keyBuffer = [UInt8](repeating: 0, count: keySize)
+        
+        // Encrypto  should less than key length
+        guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
+        return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
     }
 }

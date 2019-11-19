@@ -19,7 +19,6 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
     @IBOutlet var viewForSupport: UIView!
     @IBOutlet var viewForOther: UIView!
     
-    //lables outlets
     @IBOutlet weak var lbl_BoxBigcount: UILabel!
     @IBOutlet weak var lbl_boxTitle: UILabel!
     @IBOutlet weak var lbl_boxSubtitle: UILabel!
@@ -33,19 +32,14 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
     @IBOutlet weak var lblSubscriptionExpireDate: UILabel!
     @IBOutlet weak var lblResyncApp: UILabel!
     @IBOutlet weak var lblLogOut: UILabel!
-    
-    //buttons outlets
     @IBOutlet weak var btnWebsite: UIButton!
     @IBOutlet weak var btnLogout: UIButton!
     @IBOutlet weak var btnEmail: UIButton!
     @IBOutlet weak var btnTermCondition: UIButton!
     @IBOutlet weak var btnRequestBoxCountCorrection: UIButton!
     @IBOutlet weak var btnCallus: UIButton!
-    
-    //lables outlets
     @IBOutlet weak var lblTapWebsite: UILabel!
     @IBOutlet weak var lblCorporateOrIndividual: UILabel!
-    
     @IBOutlet weak var consttrainHeight: NSLayoutConstraint!
     @IBOutlet weak var constainMigratVHeight: NSLayoutConstraint!
     
@@ -67,7 +61,6 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
         appDelegate.BoardercolorOfView(sender: viewForSupport, color: appDelegate.uicolorFromHex(rgbValue: 0xE7E7E7), borderWidth: 0, cornerRadius: 5)
         appDelegate.BoardercolorOfView(sender: viewForOther, color: appDelegate.uicolorFromHex(rgbValue: 0xE7E7E7), borderWidth: 0, cornerRadius: 5)
         appDelegate.BoardercolorOfView(sender: viewForAccountDetail, color:appDelegate.uicolorFromHex(rgbValue: 0xD2D3D5), borderWidth: 1, cornerRadius: 5)
-        
         UpdateBoxDetails()
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapFunction))
@@ -94,6 +87,7 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     //MARK: IB-Action
@@ -102,20 +96,18 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
         self.navigationController?.pushViewController(boxHistory_vc, animated: true)
     }
     
+    //MARK: Action Resync
     @IBAction func ActionOnbtnResync(_ sender: UIButton) {
         GetUserDetails()
     }
     
     @IBAction func ActionOnbtnCallus(_ sender: UIButton) {
-        if #available(iOS 10.0, *) {
-            if Callus != "" {
-                UIApplication.shared.open(NSURL(string: "tel://" + Callus)! as URL)
-            }
-        } else {
-            // Fallback on earlier versions
+        if Callus != "" {
+            UIApplication.shared.open(NSURL(string: "tel://" + Callus)! as URL)
         }
     }
     
+    //MARK: Action Logout
     @IBAction func actionOnLogOut(_ sender: Any) {
         alertOnLogout()
     }
@@ -131,16 +123,11 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
         
         logOutAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
         }))
-        
         present(logOutAlert, animated: true, completion: nil)
     }
     
     @IBAction func ActionOnbtnWebsite(_ sender: UIButton) {
-        if #available(iOS 10.0, *) {
-            UIApplication.shared.open(NSURL(string:webUrl)! as URL)
-        } else {
-            // Fallback on earlier versions
-        }
+        UIApplication.shared.open(NSURL(string:webUrl)! as URL)
     }
     
     @IBAction func actionOnMoveTo(_ sender: Any) {
@@ -190,11 +177,7 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
     }
     
     @IBAction func ActionOnbtnTerms(_ sender: UIButton) {
-        if #available(iOS 10.0, *) {
-            UIApplication.shared.open(NSURL(string:termsAndCondition)! as URL)
-        } else {
-            // Fallback on earlier versions
-        }
+        UIApplication.shared.open(NSURL(string:termsAndCondition)! as URL)
     }
     
     @IBAction func ActionOnbtnEmail(_ sender: UIButton) {
@@ -226,14 +209,12 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
     
     //MARK: USer details
     func GetUserDetails(){
-        
         let  headers: HTTPHeaders = ["Content-Type": "application/json","authorization": LoginToken]
         print(headers)
         MasterWebService.sharedInstance.GET_WithHeaderCustom_webservice(Url:  EndPoints.User_Detail_URL + "?id=\(LoginUserId)", prm: nil ,header: headers,background:false,completion: {_result,_statusCode in
+            //   print(_result) as! Any
             if _statusCode == 200 {
                 if _result is NSDictionary {
-                    print("dict")
-                    print(_result)
                     let Responsedata: NSDictionary = _result as! NSDictionary
                     let status : Int =  Responsedata.value(forKey: "status") as! Int
                     if status == 0 {
@@ -258,11 +239,11 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
                         }
                         self.UpdateBoxDetails()
                     }
-                } else {
+                }else
+                {
                     self.showAlert(withTitle: "Message", message: "Somthing went wrong JSON serialization failed.")
                 }
                 if _result is NSArray {
-                    print("array")
                 }
             }else{
                 self.showAlert(withTitle: "Message", message:  "Somthing went wrong.")
@@ -354,13 +335,12 @@ class AccountVC: UIViewController,MFMailComposeViewControllerDelegate{
         }
     }
     
+    //MARK: remove all nsuserdeffaluts
     func LogOUtUserAfterService(){
-        //MARK: remove all nsuserdeffaluts
         LoginUserId = ""
         LoginToken = ""
         UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
         UserDefaults.standard.synchronize()
-        
         let nav_splaxh_vc  = storyboard?.instantiateViewController(withIdentifier: "Navigtioncontroller") as! UINavigationController
         appDelegate.window?.rootViewController = nav_splaxh_vc
     }

@@ -19,18 +19,12 @@ extension UIAlertAction{
     }
 }
 
-
-
 //MARK: String Extention
 extension String {
-    
-    
     
     var stringByRemovingWhitespaces: String {
         return components(separatedBy: .whitespaces).joined(separator: "")
     }
-
-    
     
     func capitalizingFirstLetter() -> String {
         let first = String(characters.prefix(1)).capitalized
@@ -41,7 +35,7 @@ extension String {
     mutating func capitalizeFirstLetter() {
         self = self.capitalizingFirstLetter()
     }
-
+    
     func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
         let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
@@ -63,6 +57,7 @@ extension String {
         // .joinWithSeparator(" ")
     }
 }
+
 //MARK: Color Extention
 extension UIColor {
     convenience init(red: Int, green: Int, blue: Int) {
@@ -80,29 +75,17 @@ extension UIColor {
             blue: rgb & 0xFF
         )
     }
-    /*
-     uses
-     let color = UIColor(red: 0xFF, green: 0xFF, blue: 0xFF)
-     let color2 = UIColor(rgb: 0xFFFFFF)
-     */
-
 }
+
 extension NSString {
     func whitespacesAndNewlines() -> NSString {
-        
         return trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines) as NSString
     }
-    
 }
 
-
 //MARK: UIButton Extention
-
 extension UIButton {
     func underline() {
-        //let attributedString = NSMutableAttributedString(string: (self.titleLabel?.text!)!)
-       // attributedString.addAttNSAttributedStringKey.underlineStyleuteName;, value: NSUnderlineStyle.styleSingle.rawValue, range: NSRange(location: 0, length: (self.titleLabel?.text!.characters.count)!))
-        //self.setAttributedTitle(attributedString, for: .normal)
     }
     func buttonCircular() {
         self.layer.cornerRadius = self.frame.width/2
@@ -125,7 +108,6 @@ extension UIImage {
         
         return image
     }
-
     
     func maskWithFullColor(color: UIColor ,full: Bool) -> UIImage? {
         let maskImage = cgImage!
@@ -134,11 +116,10 @@ extension UIImage {
         let height = size.height
         var bounds: CGRect = CGRect()
         if full == true {
-             bounds = CGRect(x: 0, y: 0, width: width, height: height)
+            bounds = CGRect(x: 0, y: 0, width: width, height: height)
         }else {
             bounds = CGRect(x: 0, y: 0, width: width / 2, height: height)
         }
-        
         
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
@@ -155,7 +136,6 @@ extension UIImage {
             return nil
         }
     }
-    
 }
 
 //MARK: ImageView Extention
@@ -166,9 +146,7 @@ extension UIImageView{
         })
     }
     
-    
     public func imageFromServerURL(urlString: String) {
-        
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
             print("url string",urlString)
             if error != nil {
@@ -182,8 +160,8 @@ extension UIImageView{
             
         }).resume()
     }
+
     public func imageFromServerURLWithBlurEffect(urlString: String) {
-        
         URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
             print("url string",urlString)
             if error != nil {
@@ -198,239 +176,164 @@ extension UIImageView{
         }).resume()
     }
     
-    
     func imageCircular() {
         self.layer.cornerRadius = self.frame.width/2
         self.layer.masksToBounds = true
     }
     
-   
     func showImage(urlofimage: String){
-    self.createDirectory()
-    
-    let imgarr = urlofimage.components(separatedBy: "/")
-    let extantion_name: String = imgarr[imgarr.count - 1]
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    
-    
-    let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-    let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
-    let filePath = url.appendingPathComponent(extantion_name)?.path
-    let fileManager = FileManager.default
-    if fileManager.fileExists(atPath: filePath!) {
-    //print("FILE AVAILABLE")
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    if (self.getImage(imagePAth: filePath!)){
-    
-    }
-    
-    }else{
-    //  print("FILE NOT AVAILABLE")
-    //self.image = UIImage(named: "contect_user_img.png")
-    self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: nil)
-    
-    }
+        self.createDirectory()
+        
+        let imgarr = urlofimage.components(separatedBy: "/")
+        let extantion_name: String = imgarr[imgarr.count - 1]
+        self.image = UIImage(named: "contect_user_img.png")
+        self.contentMode = .scaleAspectFit
+        
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
+        let filePath = url.appendingPathComponent(extantion_name)?.path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath!) {
+            //print("FILE AVAILABLE")
+            self.image = UIImage(named: "contect_user_img.png")
+            self.contentMode = .scaleAspectFit
+            if (self.getImage(imagePAth: filePath!)){
+            }
+        }else{
+            //  print("FILE NOT AVAILABLE")
+            self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: nil)
+        }
     }
     
     func ShowImageFromUrl(urlofimage: String, frame: CGRect){
-    self.createDirectory()
-    let imgarr = urlofimage.components(separatedBy: "/")
-    let extantion_name: String = imgarr[imgarr.count - 1]
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    let indicatore_profilePic: UIActivityIndicatorView = UIActivityIndicatorView()
-    indicatore_profilePic.frame = CGRect(x: frame.width / 2 - 10, y: frame.height / 2 - 10, width: 20, height: 20)
-    //CGRectMake(frame.width / 2 - 10, frame.height / 2 - 10, 20, 20)
-    //  print(indicatore_profilePic.frame)
-    indicatore_profilePic.color = UIColor.white
-    
-    indicatore_profilePic.startAnimating()
-    //   indicatore_profilePic.transform = CGAffineTransform(scaleX: 3.5, y: 3.5)
-    indicatore_profilePic.color = UIColor.black
-    self.addSubview(indicatore_profilePic)
-    self.bringSubview(toFront: indicatore_profilePic)
-    let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-    let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
-    let filePath = url.appendingPathComponent(extantion_name)?.path
-    let fileManager = FileManager.default
-    if fileManager.fileExists(atPath: filePath!) {
-    //print("FILE AVAILABLE")
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    if (self.getImage(imagePAth: filePath!)){
-    indicatore_profilePic.stopAnimating()
-    indicatore_profilePic.isHidden = true
+        self.createDirectory()
+        let imgarr = urlofimage.components(separatedBy: "/")
+        let extantion_name: String = imgarr[imgarr.count - 1]
+        self.image = UIImage(named: "contect_user_img.png")
+        self.contentMode = .scaleAspectFit
+        let indicatore_profilePic: UIActivityIndicatorView = UIActivityIndicatorView()
+        indicatore_profilePic.frame = CGRect(x: frame.width / 2 - 10, y: frame.height / 2 - 10, width: 20, height: 20)
+        indicatore_profilePic.color = UIColor.white
+        indicatore_profilePic.startAnimating()
+        indicatore_profilePic.color = UIColor.black
+        self.addSubview(indicatore_profilePic)
+        self.bringSubview(toFront: indicatore_profilePic)
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
+        let filePath = url.appendingPathComponent(extantion_name)?.path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath!) {
+            self.image = UIImage(named: "contect_user_img.png")
+            self.contentMode = .scaleAspectFit
+            if (self.getImage(imagePAth: filePath!)){
+                indicatore_profilePic.stopAnimating()
+                indicatore_profilePic.isHidden = true
+            }
+        }else{
+            self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: indicatore_profilePic)
+        }
     }
-    
-    }else{
-    //  print("FILE NOT AVAILABLE")
-    //self.image = UIImage(named: "contect_user_img.png")
-    self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: indicatore_profilePic)
-    
-    }
-    }
-    
-    
-    
-    
-    
-    
-    
     
     //MARK: show image with activity indicatore
-    
     func ShowImageFromUrlWithActivityIndicatore(urlofimage: String, frame: CGRect, indicatore : UIActivityIndicatorView) {
-    self.createDirectory()
-    let imgarr = urlofimage.components(separatedBy: "/")
-    let extantion_name: String = imgarr[imgarr.count - 1]
-    indicatore.color = UIColor.white
-    indicatore.startAnimating()
-    let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-    let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
-    let filePath = url.appendingPathComponent(extantion_name)?.path
-    let fileManager = FileManager.default
-    if fileManager.fileExists(atPath: filePath!) {
-    //print("FILE AVAILABLE")
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    if (self.getImage(imagePAth: filePath!)){
-    indicatore.stopAnimating()
-    indicatore.isHidden = true
-    }
-    
-    }else{
-    //  print("FILE NOT AVAILABLE")
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: indicatore)
-    
-    }
+        self.createDirectory()
+        let imgarr = urlofimage.components(separatedBy: "/")
+        let extantion_name: String = imgarr[imgarr.count - 1]
+        indicatore.color = UIColor.white
+        indicatore.startAnimating()
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: "\(path)/MyappDirectory")
+        let filePath = url.appendingPathComponent(extantion_name)?.path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath!) {
+            //print("FILE AVAILABLE")
+            self.image = UIImage(named: "contect_user_img.png")
+            self.contentMode = .scaleAspectFit
+            if (self.getImage(imagePAth: filePath!)){
+                indicatore.stopAnimating()
+                indicatore.isHidden = true
+            }
+        }else{
+            //  print("FILE NOT AVAILABLE")
+            self.image = UIImage(named: "contect_user_img.png")
+            self.contentMode = .scaleAspectFit
+            self.downloadImageFrom(link: urlofimage,contentMode:UIViewContentMode.scaleToFill,nameofImage:extantion_name,indicate: indicatore)
+        }
     }
     
     private func downloadImageFrom(link:String, contentMode: UIViewContentMode,nameofImage: String, indicate: UIActivityIndicatorView?) {
-    // ClaudFruntUrl +
-    URLSession.shared.dataTask( with: NSURL(string:link)! as URL, completionHandler: {
-    (data, response, error) -> Void in
-    
-    DispatchQueue.main.async() { () -> Void in
-    self.contentMode =  contentMode
-    if (error == nil){
-    if (data == nil){
-    self.image = UIImage(named: "contect_user_img.png")
-    self.contentMode = .scaleAspectFit
-    indicate?.stopAnimating()
-    indicate?.isHidden = true
-    }
-    else if (data != nil)
-    {
-    if let getImage = UIImage(data: data!) {
-    self.image = getImage
-    self.contentMode = .scaleAspectFit
-    self.saveImageDocumentDirectory(sender: getImage,name: nameofImage)
-    // print("download from link\(link)")
-    }
-    indicate?.stopAnimating()
-    indicate?.isHidden = true
-    
-    }
-    }
-    }
-    }).resume()
+        // ClaudFruntUrl +
+        URLSession.shared.dataTask( with: NSURL(string:link)! as URL, completionHandler: {
+            (data, response, error) -> Void in
+            
+            DispatchQueue.main.async() { () -> Void in
+                self.contentMode =  contentMode
+                if (error == nil){
+                    if (data == nil){
+                        self.image = UIImage(named: "contect_user_img.png")
+                        self.contentMode = .scaleAspectFit
+                        indicate?.stopAnimating()
+                        indicate?.isHidden = true
+                    }
+                    else if (data != nil)
+                    {
+                        if let getImage = UIImage(data: data!) {
+                            self.image = getImage
+                            self.contentMode = .scaleAspectFit
+                            self.saveImageDocumentDirectory(sender: getImage,name: nameofImage)
+                            // print("download from link\(link)")
+                        }
+                        indicate?.stopAnimating()
+                        indicate?.isHidden = true
+                    }
+                }
+            }
+        }).resume()
     }
     
     private func saveImageDocumentDirectory(sender: UIImage , name : String){
-    let fileManager = FileManager.default
-    //        var nameofimage: String = String()
-    //         var extantion: String  = String()
-    //
-    //        var myStringArr = name.componentsSeparatedByString(".")
-    //        if (myStringArr.count != 0)
-    //        {
-    //        let count : Int = myStringArr.count - 1
-    //      extantion = myStringArr [count]
-    //        print(extantion)
-    //        if (extantion == "png")
-    //        {
-    //             nameofimage = name
-    //          }else if (extantion == "jpg")
-    //          {
-    //             nameofimage = name
-    //
-    //          }else if (extantion == "jpeg")
-    //        {
-    //             nameofimage = name
-    //
-    //           }
-    //        }else{
-    //            nameofimage = "\(extantion).png"
-    //            print(nameofimage)
-    //
-    //        }
-    print("save with link === >>> \(name)")
-    
-    let paths2 = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory/\(name)")
-    let imageData = UIImageJPEGRepresentation(sender, 0.5)!
-    fileManager.createFile(atPath: paths2 as String, contents: imageData, attributes: nil)
-    
+        let fileManager = FileManager.default
+        print("save with link === >>> \(name)")
+        let paths2 = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory/\(name)")
+        let imageData = UIImageJPEGRepresentation(sender, 0.5)!
+        fileManager.createFile(atPath: paths2 as String, contents: imageData, attributes: nil)
     }
-    
-    
-    //    private func saveImageDocumentDirectory(sender: UIImage , name : String){
-    //        let fileManager = NSFileManager.defaultManager()
-    //        let paths2 = (NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as NSString).stringByAppendingPathComponent("MyappDirectory/\(name)")
-    //        print(paths2)
-    //        let imageData = UIImageJPEGRepresentation(sender, 0.5)
-    //        fileManager.createFileAtPath(paths2 as String, contents: imageData, attributes: nil)
-    //
-    //    }
     
     private func getImage(imagePAth : String) -> Bool {
-    let fileManager = FileManager.default
-    if fileManager.fileExists(atPath: imagePAth){
-    
-    
-    
-    if let img :UIImage? = UIImage(contentsOfFile: imagePAth)! {
-    self.image = img
-    self.contentMode = .scaleAspectFit
-    //                let info =  try!fileManager.attributesOfItemAtPath(imagePAth)
-    //                let createDate :NSDate = info[NSFileCreationDate] as! NSDate
-    //                let currentdate = NSDate()
-    
-    return true
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: imagePAth){
+            if let img :UIImage? = UIImage(contentsOfFile: imagePAth)! {
+                self.image = img
+                self.contentMode = .scaleAspectFit
+                return true
+            }
+            return false
+        }else{
+            return false
+        }
     }
     
-    
-    return false
-    }else{
-    //print("No Image")
-    return false
-    }
-    }
     private  func createDirectory(){
-    let fileManager = FileManager.default
-    let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory")
-    if !fileManager.fileExists(atPath: paths){
-    // print("Already dictionary created.")
-    }else{
+        let fileManager = FileManager.default
+        let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory")
+        if !fileManager.fileExists(atPath: paths){
+            // print("Already dictionary created.")
+        }else{
+            
+            try! fileManager.createDirectory(atPath: paths, withIntermediateDirectories: true, attributes: nil)
+        }
+    }
     
-    try! fileManager.createDirectory(atPath: paths, withIntermediateDirectories: true, attributes: nil)
-    }
-    }
     private  func deleteDirectory(){
-    let fileManager = FileManager.default
-    let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory")
-    if fileManager.fileExists(atPath: paths){
-    try! fileManager.removeItem(atPath: paths)
-    }else{
-    //print("directory not created Something wronge.")
+        let fileManager = FileManager.default
+        let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("MyappDirectory")
+        if fileManager.fileExists(atPath: paths){
+            try! fileManager.removeItem(atPath: paths)
+        }else{
+            //print("directory not created Something wronge.")
+        }
     }
-    }
-    
-    
-    }
+}
 
 //MARK:  UIViewController
 extension UIViewController  {
@@ -442,8 +345,6 @@ extension UIViewController  {
         
         self.present(alert, animated: true, completion: nil)
     }
-    
-  
 }
 
 //MARK:  UILabel
@@ -468,10 +369,6 @@ extension UIViewController {
         toastLabel.text = message;
         toastLabel.font = FontNormal16
         toastLabel.numberOfLines = 0;
-        //        toastLabel.alpha = 0.9;
-        //        toastLabel.layer.cornerRadius = 20;
-        //        toastLabel.clipsToBounds = true;
-        
         
         ToastView.frame = CGRect(x: 0, y: self.view.frame.height, width: self.view.frame.width, height:50)
         toastLabel.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
@@ -479,17 +376,11 @@ extension UIViewController {
         self.view.addSubview(ToastView)
         ToastView.addSubview(toastLabel)
         UIView.animate(withDuration:0.3, delay:0.0, options:[], animations: {
-            
             ToastView.frame = CGRect(x: 0, y: self.view.frame.height - 50, width: self.view.frame.width, height:50)
-            
         }) { (Bool) in
-            
             UIView.animate(withDuration:0.5, delay:Double(duration) / 1000.0, options:[], animations: {
-                
                 ToastView.frame = CGRect(x: 0, y: self.view.frame.height, width: self.view.frame.width, height: 50)
-                
             }) { (Bool) in
-                
                 toastLabel.removeFromSuperview()
                 ToastView.removeFromSuperview()
             }
@@ -497,7 +388,6 @@ extension UIViewController {
     }
     
     func showToast(message : String) {
-        
         let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         toastLabel.textColor = UIColor.white
@@ -517,7 +407,7 @@ extension UIViewController {
 }
 
 //MARK: View Extention
- extension UIView {
+extension UIView {
     func fadeIn(withDuration duration: TimeInterval = 1.0) {
         UIView.animate(withDuration: duration, animations: {
             self.alpha = 1.0
@@ -525,7 +415,6 @@ extension UIViewController {
     }
     
     /// Fade out a view with a duration
-    ///
     /// - Parameter duration: custom animation duration
     func fadeOut(withDuration duration: TimeInterval = 1.0) {
         UIView.animate(withDuration: duration, animations: {
@@ -534,31 +423,29 @@ extension UIViewController {
     }
     
     public func showToast(message:String, duration:Int = 2000) {
-//        let toastLabel = UIPaddingLabel();
-//        toastLabel.padding = 10;
-//        toastLabel.translatesAutoresizingMaskIntoConstraints = false;
-//        toastLabel.backgroundColor = UIColor.darkGray;
-//        toastLabel.textColor = UIColor.white;
-//        toastLabel.textAlignment = .center;
-//        toastLabel.text = message;
-//        toastLabel.numberOfLines = 0;
-//        toastLabel.alpha = 0.9;
-//        toastLabel.layer.cornerRadius = 20;
-//        toastLabel.clipsToBounds = true;
-//        self.addSubview(toastLabel);
-//        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.left, relatedBy:.greaterThanOrEqual, toItem:self, attribute:.left, multiplier:1, constant:20));
-//        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.right, relatedBy:.lessThanOrEqual, toItem:self, attribute:.right, multiplier:1, constant:-20));
-//        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.bottom, relatedBy:.equal, toItem:self, attribute:.bottom, multiplier:1, constant:-70));
-//        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.centerX, relatedBy:.equal, toItem:self, attribute:.centerX, multiplier:1, constant:0));
-//        UIView.animate(withDuration:0.5, delay:Double(duration) / 1000.0, options:[], animations: {
-//            toastLabel.alpha = 0.0;
-//        }) { (Bool) in
-//            toastLabel.removeFromSuperview();
-//        }
+        //        let toastLabel = UIPaddingLabel();
+        //        toastLabel.padding = 10;
+        //        toastLabel.translatesAutoresizingMaskIntoConstraints = false;
+        //        toastLabel.backgroundColor = UIColor.darkGray;
+        //        toastLabel.textColor = UIColor.white;
+        //        toastLabel.textAlignment = .center;
+        //        toastLabel.text = message;
+        //        toastLabel.numberOfLines = 0;
+        //        toastLabel.alpha = 0.9;
+        //        toastLabel.layer.cornerRadius = 20;
+        //        toastLabel.clipsToBounds = true;
+        //        self.addSubview(toastLabel);
+        //        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.left, relatedBy:.greaterThanOrEqual, toItem:self, attribute:.left, multiplier:1, constant:20));
+        //        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.right, relatedBy:.lessThanOrEqual, toItem:self, attribute:.right, multiplier:1, constant:-20));
+        //        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.bottom, relatedBy:.equal, toItem:self, attribute:.bottom, multiplier:1, constant:-70));
+        //        self.addConstraint(NSLayoutConstraint(item:toastLabel, attribute:.centerX, relatedBy:.equal, toItem:self, attribute:.centerX, multiplier:1, constant:0));
+        //        UIView.animate(withDuration:0.5, delay:Double(duration) / 1000.0, options:[], animations: {
+        //            toastLabel.alpha = 0.0;
+        //        }) { (Bool) in
+        //            toastLabel.removeFromSuperview();
+        //        }
     }
 } 
-
-
 
 ////Getting Device modal name
 //let modelName = UIDevice.current.modelName
@@ -606,7 +493,6 @@ public enum Model : String {
 // #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 //MARK: UIDevice extensions
 // #-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
 public extension UIDevice {
     public var type: Model {
         var systemInfo = utsname()
@@ -614,7 +500,6 @@ public extension UIDevice {
         let modelCode = withUnsafePointer(to: &systemInfo.machine) {
             $0.withMemoryRebound(to: CChar.self, capacity: 1) {
                 ptr in String.init(validatingUTF8: ptr)
-                
             }
         }
         var modelMap : [ String : Model ] = [

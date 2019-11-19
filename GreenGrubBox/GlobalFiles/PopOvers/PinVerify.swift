@@ -10,40 +10,26 @@ import UIKit
 
 class PinVerify: UIView {
     
-    
     @IBOutlet weak var ViewForMain: UIView!
-   
-   
-    
     
     // Call back implementation
-    
     public typealias PinVerifyCallback = ( NSDictionary?,Bool?) -> Void
     private var callback: PinVerifyCallback?
-    
-    
-    
     
     // MARK: - Dialog initialization
     override open func awakeFromNib() {
         super.awakeFromNib()
         ViewForMain.layer.cornerRadius = 5.0
         ViewForMain.clipsToBounds = true
-        
     }
     
     func instanceFromNib() -> UIView {
-        
         return UINib(nibName: "PinVerify", bundle: nil).instantiate(withOwner: nil, options: nil)[0] as! PinVerify
     }
     
     func Setup(){
         self.layoutIfNeeded()
         self.setNeedsDisplay()
-        //        view_main.layer.cornerRadius = 0
-        //        view_main.layer.masksToBounds = true
-        //        view_main.layer.borderWidth = 0.1
-        //        view_main.layer.borderColor = UIColor.clear.cgColor
     }
     
     open func addDiaLogToView(callback: @escaping PinVerifyCallback){
@@ -57,13 +43,8 @@ class PinVerify: UIView {
         window.endEditing(true)
     }
     
-    
-    
     @IBAction func ActionOnCloseBtn(_ sender: UIButton) {
         self.callback?(nil, false)
        self.removeFromSuperview()
     }
-    
-    
-
 }

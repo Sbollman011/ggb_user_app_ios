@@ -35,12 +35,12 @@ class VerifyPinVC: UIViewController, UITextFieldDelegate {
         txtPin.clipsToBounds = true
         txtPin.layer.borderColor = UIColor.gray.cgColor
         txtPin.layer.borderWidth = 1
-        
         PinVerify().addDiaLogToView(callback: {
             (dict, bool) in
             print(dict ?? "nul", bool ?? "nul")
         })
     }
+    
     @IBAction func actionBack(_ sender: Any) {
         for controller in self.navigationController!.viewControllers as Array {
             if controller.isKind(of: LoginVC.self) {
@@ -78,15 +78,12 @@ class VerifyPinVC: UIViewController, UITextFieldDelegate {
     }
     
     //MARK: CUSTOM METHODS
-    
     @objc func textFieldDidChange(_ textField:UITextField){
-        
         let searchTextString : NSString! = textField.text as NSString!
         if (searchTextString.length  == 6 )
         {
             searchenable = true
             print(textField.text as Any)
-            //if (textField.text != ""){
             Searchtimer?.invalidate()
             self.Searchtimer = Timer.scheduledTimer(timeInterval: 0.90, target: self, selector: #selector(VerifyPinVC.CallSearch), userInfo: nil, repeats: false)
         }
@@ -109,10 +106,10 @@ class VerifyPinVC: UIViewController, UITextFieldDelegate {
             "otp": Int(SearchText)!,
             "email": email,
         ]
-        
         MasterWebService.sharedInstance.POST_webservice(Url: EndPoints.User_VerifyOTP_URL, prm: prm, background: false,completion: { _result,_statusCode in
             if _statusCode == 200 {
                 if _result is NSDictionary {
+                    print("dict")
                     print(_result)
                     let Responsedata: NSDictionary = _result as! NSDictionary
                     let status : Int =  Responsedata.value(forKey: "status") as! Int
@@ -124,8 +121,7 @@ class VerifyPinVC: UIViewController, UITextFieldDelegate {
                         let id : String = data.value(forKey: "_id") as! String
                         self.verifyCompletion(id: id)
                     }
-                }else
-                {
+                } else {
                     self.showErrorToast(message: "Somthing went wrong JSON serialization failed.", backgroundColor: UIColor.red)
                 }
                 if _result is NSArray {
@@ -148,7 +144,6 @@ class VerifyPinVC: UIViewController, UITextFieldDelegate {
         let prm :Parameters  = [
             "email": email,
         ]
-        
         MasterWebService.sharedInstance.POST_webservice(Url: EndPoints.User_ResendOTP_URL, prm: prm, background: false,completion: { _result,_statusCode in
             if _statusCode == 200 {
                 if _result is NSDictionary {

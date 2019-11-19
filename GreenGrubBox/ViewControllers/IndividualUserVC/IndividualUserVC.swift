@@ -11,6 +11,7 @@ import DropDown
 import Stripe
 import Alamofire
 import PKHUD
+import CCValidator
 
 class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTextFieldDelegate{
     var dropDownData:[String] = [];
@@ -22,18 +23,14 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     @IBOutlet weak var lblforSelectedItem: UILabel!
     @IBOutlet weak var btnForSelectedItem: UIButton!
     @IBOutlet weak var individualPopView: UIView!
-    
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblPackageType: UILabel!
     @IBOutlet weak var lblCard: UILabel!
-    
     @IBOutlet weak var lblCardStatus: UILabel!
     @IBOutlet weak var btnDone: UIButton!
-    
     @IBOutlet weak var btnIndividual: UIButton!
     @IBOutlet weak var btnCorporate: UIButton!
-    
     @IBOutlet weak var viewForCorporate: UIView!
     @IBOutlet weak var txtFieldForNameC: UITextField!
     @IBOutlet weak var txtFieldForPromoCode: UITextField!
@@ -41,14 +38,16 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     @IBOutlet weak var lblNameC: UILabel!
     @IBOutlet weak var lblPromocode: UILabel!
     @IBOutlet weak var btnDoneC: UIButton!
-    
     @IBOutlet weak var viewTop: UIView!
-    
     @IBOutlet weak var lblPriceItem: UILabel!
     @IBOutlet weak var lblIndividual: UILabel!
     @IBOutlet weak var lblSubIndividual: UILabel!
     @IBOutlet weak var lblCorporate: UILabel!
     @IBOutlet weak var lblSibCorporate: UILabel!
+    @IBOutlet weak var txtCardNo: UITextField!
+    @IBOutlet weak var txtCardExMonth: UITextField!
+    @IBOutlet weak var txtCardExYear: UITextField!
+    @IBOutlet weak var txtCardCVC: UITextField!
     
     var accountType : String = "1"
     
@@ -60,7 +59,12 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
         self.txtFieldForName.layer.borderColor = UIColor.groupTableViewBackground.cgColor
         self.txtFieldForName.layer.cornerRadius = 2.0
         self.txtFieldForName.clipsToBounds = true
-        self.txtFieldForName.delegate = self as UITextFieldDelegate
+        self.txtFieldForName.delegate = self
+        
+        self.txtCardNo.delegate = self
+        self.txtCardExMonth.delegate = self
+        self.txtCardExYear.delegate = self
+        self.txtCardCVC.delegate = self
         
         self.cardDetailsView.layer.borderWidth = 2.0
         self.cardDetailsView.layer.borderColor = UIColor.groupTableViewBackground.cgColor
@@ -105,7 +109,6 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        StripeCardSetup()
     }
     
     func fontSetup(){
@@ -122,72 +125,23 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
         btnDoneC.titleLabel?.font = FontBold15
     }
     
-    func StripeCardSetup(){
-        for vi in cardDetailsView.subviews{
-            vi.removeFromSuperview()
-        }
-        paymentCardTextField.frame = CGRect(x: 0, y: 0, width: cardDetailsView.frame.width, height: cardDetailsView.frame.height)
-        paymentCardTextField.font = FontBold15
-        paymentCardTextField.delegate = self
-        cardDetailsView.addSubview(paymentCardTextField)
-    }
-    
-    // MARK: STPPaymentCardTextFieldDelegate
-    func paymentCardTextFieldDidChange(_ textField: STPPaymentCardTextField) {
-        print(textField.isValid)
-        if textField.isValid {
-            lblCardStatus.isHidden = false
-            lblCardStatus.text = "This card is valid"
-            lblCardStatus.textColor = appDelegate.uicolorFromHex(rgbValue: 0x41BC40)
-            lblCardStatus.textAlignment = .right
-            
-        }else {
-            lblCardStatus.isHidden = false
-            lblCardStatus.text = "This card is not valid"
-            lblCardStatus.textColor = UIColor.red
-            lblCardStatus.textAlignment = .right
-            
-        }
-        if textField.hasText == false {
-            lblCardStatus.isHidden = true
-        }
-    }
-    
-    //MARK: custom card adding
-    func GeTTkenFromStripe(){
-        HUD.show(.progress)
-        STPAPIClient.shared().createToken( withCard: paymentCardTextField.cardParams) { (token: STPToken?, error: Error?) in
-            guard let token = token, error == nil else {
-                // Present error to user...
-                print(error ?? "Nothing")
-                // print(token)
-                self.showErrorToast(message:(error?.localizedDescription)! , backgroundColor: UIColor.red)
-                HUD.hide()
-                return
-            }
-            print(token.description)
-            print(token.tokenId)
-            self.CardToken =  token.description
-            HUD.hide()
-            if self.validation() {
-                self.Individual_signUP(userId: self.userID, name: (self.txtFieldForName.text?.condenseWhitespace())! , PackageIndex:self.packageIndex, Card: self.CardToken)
-            }
-        }
-    }
-    
     var CardToken : String = ""
     func validation() -> Bool {
         if txtFieldForName.text?.condenseWhitespace() != "" {
             if packageSelected {
                 let packageID : String = PackageArray[packageIndex]._id!
                 if packageID != "" {
-                    if paymentCardTextField.isValid {
+                    let isFullCardDataOK = CCValidator.validate(creditCardNumber: txtCardNo.text! as String)
+                    if isFullCardDataOK{
                         return true
-                    }else {
-                        self.showErrorToast(message: "Please add a valid card details.", backgroundColor: UIColor.red)
+                    }else{
+                        if txtCardNo.text?.condenseWhitespace() != "" {
+                            self.showErrorToast(message: "Please add a valid card details.", backgroundColor: UIColor.red)
+                        }else{
+                            self.showErrorToast(message: "Please add a card details.", backgroundColor: UIColor.red)
+                        }
                     }
-                    return true
-                }else {
+                } else {
                     self.showErrorToast(message: "Please select package.", backgroundColor: UIColor.red)
                 }
             }else {
@@ -202,10 +156,12 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     @IBAction func actionForDropDown(_ sender: UIButton) {
         customDropDown.show()
+        print("Hii")
     }
     
     //MARK: Dropdown setup
@@ -229,19 +185,16 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
         
         customDropDown.direction = .bottom
         customDropDown.dismissMode = .automatic
-
+        
         customDropDown.bottomOffset = CGPoint(x: 0, y: (customDropDown.anchorView?.plainView.bounds.height)!)
         customDropDown.selectionAction = { [unowned self] (index, item) in
             self.packageSelected = true
             self.packageIndex = index
             self.lblforSelectedItem.text = self.PackageArray[index].name?.capitalized
             self.lblPriceItem.text = "$" + self.PackageArray[index].value!
-            print("here is the resulte")
-            
         }
         
         customDropDown.cancelAction = { [unowned self] in
-            print("here is the Cancel resulte")
         }
     }
     
@@ -254,18 +207,13 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     
     //MARK: ActionOn outtesls
     var userID: String = ""
-    let paymentCardTextField = STPPaymentCardTextField()
     @IBAction func ActionOnbtnDone(_ sender: UIButton) {
         self.view.endEditing(true)
         if validation(){
-            if paymentCardTextField.cardParams.cvc != "" {
-                if paymentCardTextField.isValid {
-                    GeTTkenFromStripe()
-                }else {
-                    self.showErrorToast(message: "Card is not valid.", backgroundColor: UIColor.red)
-                }
-            }else {
-                self.showErrorToast(message: "Please enter card details.", backgroundColor: UIColor.red)
+            if validateYearAndMonthAndCVC(){
+                let dictionary : [String : String] = ["number":txtCardNo.text!,"expMonth":txtCardExMonth.text!,"expYear":txtCardExYear.text!,"cvc":txtCardCVC.text!]
+                let getjsonString = getJsonString(jsonDict: dictionary)
+                self.getJsonData(jsonSrting: getjsonString)
             }
         }
     }
@@ -277,7 +225,6 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
             lblSubIndividual.font = UIFont(name: "Lato-Bold", size: 12.0)
             lblCorporate.font = UIFont(name: "Lato-regular", size: 14.0)
             lblSibCorporate.font = UIFont(name: "Lato-regular", size: 12.0)
-            
             btnCorporate.isSelected = false
             btnIndividual.isSelected = true
             self.individualPopView.isHidden = false
@@ -317,6 +264,7 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
                         let message : String = Responsedata.value(forKey: "message") as! String
                         self.showErrorToast(message: "\(message)", backgroundColor: UIColor.red)
                     }else if status == 1 {
+                        
                         let data : NSArray = Responsedata.value(forKey: "data") as! NSArray
                         print(data)
                         self.PackageArray =  Package_Base.modelsFromDictionaryArray(array: data)
@@ -335,15 +283,15 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
     }
     
     //MARK: individual user registration api
-    func Individual_signUP(userId: String,name: String,PackageIndex: Int,Card: String){
+    func Individual_signUP(userId: String,name: String,PackageIndex: Int, Card: String, cardDetail: String){
         let package: String = PackageArray[packageIndex]._id!
         let type: Int = 1
         let prm:Parameters  = ["userId": userId,
                                "name": name,
                                "packageId": package,
                                "cardToken": Card,
-                               "accountType": type]
-        
+                               "accountType": type,
+                               "cardDetail": cardDetail]
         let  headers: HTTPHeaders = ["Content-Type": "application/json"]
         MasterWebService.sharedInstance.PUT_WithHeaderCustom_webservice(Url: EndPoints.Complete_registration_URL, prm: prm, header: headers,  background: false,completion: { _result,_statusCode in
             print(_result)
@@ -390,7 +338,7 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
             if validationC(){
                 self.corporate_signUP(userId: userID, name: (txtFieldForNameC.text?.condenseWhitespace())!, promocode: (txtFieldForPromoCode.text?.condenseWhitespace())!)
             }
-        } else {
+        }else {
             self.showErrorToast(message: "User ID not exist.", backgroundColor: UIColor.red)
         }
     }
@@ -403,7 +351,6 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
             } else {
                 self.showErrorToast(message: "Please enter your promocode.", backgroundColor: UIColor.red)
             }
-            
         } else {
             self.showErrorToast(message: "Please enter your name.", backgroundColor: UIColor.red)
         }
@@ -415,14 +362,13 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
         let prm:Parameters  = ["userId": userId,
                                "name": name,
                                "promoCode": promocode,
-                               "accountType": type]
-        
+                               "accountType": type
+        ]
+        print(prm)
         let  headers: HTTPHeaders = ["Content-Type": "application/json"]
         MasterWebService.sharedInstance.PUT_WithHeaderCustom_webservice(Url: EndPoints.Complete_registration_URL, prm: prm, header: headers,  background: false,completion: { _result,_statusCode in
             if _statusCode == 200 {
                 if _result is NSDictionary {
-                    print("dict")
-                    print(_result)
                     let Responsedata: NSDictionary = _result as! NSDictionary
                     let status : Int =  Responsedata.value(forKey: "status") as! Int
                     if status == 0 {
@@ -442,17 +388,119 @@ class IndividualUserVC: UIViewController, UITextFieldDelegate, STPPaymentCardTex
                     self.showErrorToast(message: "Somthing went wrong JSON serialization failed.", backgroundColor: UIColor.red)
                 }
                 if _result is NSArray {
-                    print("array")
                 }
             }else{
                 self.showErrorToast(message: "Somthing went wrong.", backgroundColor: UIColor.red)
             }
         })
     }
+    
+    func validateYearAndMonthAndCVC() -> Bool{
+        if txtCardExMonth.text?.condenseWhitespace() != "" {
+            if txtCardExMonth.text!.count == 2{
+                if txtCardExYear.text?.condenseWhitespace() != "" {
+                    if txtCardExYear.text!.count == 4{
+                        if txtCardCVC.text?.condenseWhitespace() != ""{
+                            if txtCardCVC.text!.count >= 3{
+                                return true
+                            }else{
+                                self.showErrorToast(message: "Please enter valid card CVC.", backgroundColor: UIColor.red)
+                            }
+                        }else{
+                            self.showErrorToast(message: "Please enter card CVC.", backgroundColor: UIColor.red)
+                        }
+                    }else{
+                        self.showErrorToast(message: "Please enter valid card expiry year.", backgroundColor: UIColor.red)
+                    }
+                }else{
+                    self.showErrorToast(message: "Please enter card expiry year.", backgroundColor: UIColor.red)
+                }
+            }else{
+                self.showErrorToast(message: "Please enter valid card expiry month.", backgroundColor: UIColor.red)
+            }
+        }else{
+            self.showErrorToast(message: "Please enter card expiry month.", backgroundColor: UIColor.red)
+        }
+        return false
+    }
+    
+    func getJsonString(jsonDict :[String : String]) -> String{
+        let jsonData = try! JSONSerialization.data(withJSONObject: jsonDict)
+        let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)
+        return jsonString! as String
+    }
+    
+    func getJsonData(jsonSrting: String) {
+        if UserDefaults.standard.object(forKey: "rsaPublicKey") != nil{
+            if let tempNames: String = UserDefaults.standard.object(forKey: "rsaPublicKey") as? String {
+                let serverPublicKey = tempNames
+                let encryptedPassword = RSA.encrypt(string: jsonSrting, publicKey: serverPublicKey)
+                
+                self.Individual_signUP(userId: self.userID, name: (self.txtFieldForName.text?.condenseWhitespace())! , PackageIndex:self.packageIndex, Card: "", cardDetail: encryptedPassword!)
+            }
+        }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == self.txtCardNo{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 16 {
+                return true
+            } else {
+                return false
+            }
+        }else if textField == self.txtCardExMonth{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 2 {
+                return true
+            } else {
+                return false
+            }
+        }else if textField == self.txtCardExYear || textField == self.txtCardCVC{
+            let newLength = (textField.text?.utf16.count)! + string.utf16.count - range.length
+            if newLength <= 4 {
+                return true
+            } else {
+                return false
+            }
+        }else{
+            return true
+        }
+    }
+    
+    struct RSA {
+        static func encrypt(string: String, publicKey: String?) -> String? {
+            guard let publicKey = publicKey else { return nil }
+            let keyString = publicKey.replacingOccurrences(of: "-----BEGIN RSA PUBLIC KEY-----\n", with: "").replacingOccurrences(of: "\n-----END RSA PUBLIC KEY-----", with: "")
+            guard let data = Data(base64Encoded: keyString) else { return nil }
+            var attributes: CFDictionary {
+                return [kSecAttrKeyType         : kSecAttrKeyTypeRSA,
+                        kSecAttrKeyClass        : kSecAttrKeyClassPublic,
+                        kSecAttrKeySizeInBits   : 2048,
+                        kSecReturnPersistentRef : kCFBooleanTrue] as CFDictionary
+            }
+            
+            var error: Unmanaged<CFError>? = nil
+            guard let secKey = SecKeyCreateWithData(data as CFData, attributes, &error) else {
+                
+                return nil
+            }
+            return encrypt(string: string, publicKey: secKey)
+        }
+        static func encrypt(string: String, publicKey: SecKey) -> String? {
+            let buffer = [UInt8](string.utf8)
+            
+            var keySize   = SecKeyGetBlockSize(publicKey)
+            var keyBuffer = [UInt8](repeating: 0, count: keySize)
+            
+            // Encrypto  should less than key length
+            guard SecKeyEncrypt(publicKey, SecPadding.PKCS1, buffer, buffer.count, &keyBuffer, &keySize) == errSecSuccess else { return nil }
+            return Data(bytes: keyBuffer, count: keySize).base64EncodedString()
+        }
+    }
 }
 
 extension UIViewController {
-    
     func hideKeyboardWhenTappedAround() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false

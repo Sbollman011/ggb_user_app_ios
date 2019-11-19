@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "23CE53CA98335FF7EB630C272C467A1D"
+               BlueprintIdentifier = "95D38E92995F6A44A0A2E381C72E726B"
                BuildableName = "Pods_GreenGrubBox.framework"
                BlueprintName = "Pods-GreenGrubBox"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "23CE53CA98335FF7EB630C272C467A1D"
+            BlueprintIdentifier = "95D38E92995F6A44A0A2E381C72E726B"
             BuildableName = "Pods_GreenGrubBox.framework"
             BlueprintName = "Pods-GreenGrubBox"
             ReferencedContainer = "container:Pods.xcodeproj">

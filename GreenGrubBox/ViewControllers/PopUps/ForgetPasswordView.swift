@@ -22,7 +22,6 @@ class ForgetPasswordView: UIView {
     // MARK: - Dialog initialization
     override open func awakeFromNib() {
         super.awakeFromNib()
-        // Setup payment card text field
         view_main.layer.cornerRadius = 5
         view_main.layer.masksToBounds = true
         view_main.layer.borderWidth = 1
@@ -49,13 +48,12 @@ class ForgetPasswordView: UIView {
                 self.removeFromSuperview()
                 self.callback?("Please enter valid email address.",false)
             }
-        } else {
+        }else {
             self.removeFromSuperview()
             self.callback?("Please enter a email address.",false)
         }
     }
     
-    // Call back implementation
     public typealias ForgetPasswordCallback = (String?,Bool?) -> Void
     private var callback: ForgetPasswordCallback?
     
@@ -75,7 +73,6 @@ class ForgetPasswordView: UIView {
         window.addSubview(PickerDialog)
         window.bringSubview(toFront: PickerDialog)
         window.endEditing(true)
-        
         PickerDialog.fadeIn()
     }
 }

@@ -11,7 +11,6 @@ import UIKit
 
 class SliderMediaVC: UIViewController,UIGestureRecognizerDelegate,UICollectionViewDelegate,UICollectionViewDataSource {
     
-    
     var PictureMedia : [String] = []
     @IBOutlet weak var collection: UICollectionView!
     @IBOutlet weak var btnClose: UIButton!
@@ -72,6 +71,7 @@ class SliderMediaVC: UIViewController,UIGestureRecognizerDelegate,UICollectionVi
         let cell: ImageCollectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath as IndexPath) as! ImageCollectionCell
         let url = URL.init(string:PictureMedia[indexPath.row] as String)
         cell.img_picture.sd_setImage(with: url , placeholderImage: UIImage(named: "popUp_default_user.png"))
+        // cell.img_picture.showImage(urlofimage: PictureMedia[indexPath.row])
         cell.scrollview.contentSize = CGSize(width: self.view.frame.width , height: self.view.frame.height)
         cell.scrollview.delegate = self
         cell.scrollview.isScrollEnabled = true
@@ -87,6 +87,7 @@ class SliderMediaVC: UIViewController,UIGestureRecognizerDelegate,UICollectionVi
     }
     
     @objc func Goback(){
+        print("go back >>>>")
         self.dismiss(animated: true, completion: nil)
     }
 }

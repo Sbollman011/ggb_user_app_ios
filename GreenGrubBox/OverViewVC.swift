@@ -9,7 +9,6 @@
 
 import UIKit
 import Alamofire
-
 class OverViewVC: UIViewController,UIScrollViewDelegate {
     
     //MARK: Globale Variables
@@ -32,6 +31,7 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
     
     @IBOutlet weak var lbl_instruction: UILabel!
     @IBOutlet weak var btnLogin: UIButton!
+    
     @IBOutlet weak var btnSignup: UIButton!
     
     let lbl: UILabel = UILabel()
@@ -50,20 +50,20 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
     //MARK: Lifcycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         btnSignup.layer.cornerRadius = 4
         btnSignup.layer.masksToBounds = true
         btnSignup.layer.borderWidth = 0
         btnSignup.layer.borderColor = UIColor.clear.cgColor
-        
         appDelegate.ShowShadow(sender: btnSignup, color: UIColor.black, shadowRadius: 4.0, shadowOpacity:0.1, shadowOffset: CGSize(width: 10.0, height: 10.0))
         fontsetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        //login_sevice()
     }
     
+    //MARK: Font Setup
     func fontsetup(){
         lbl_instruction.font = Font2Bold13
         btnLogin.setTitle("LOG IN", for: .normal)
@@ -79,7 +79,9 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
         MiddleScroller()
     }
     
+    //MARK: SCROLL TO MIDDILE
     func MiddleScroller(){
+        //      self.pageScroller.frame = self.view.bounds
         pageScroller.contentSize.height = pageScroller.frame.height
         pageScroller.isScrollEnabled = true
         pageScroller.isDirectionalLockEnabled = true
@@ -91,7 +93,6 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
             
             frame.size = CGSize(width: self.view.frame.width, height: pageScroller.frame.height)
             self.pageScroller.isPagingEnabled = true
-
             let vforlabel : UIView = UIView.init(frame: frame)
             vforlabel.backgroundColor = UIColor.clear
             let lable_One : UILabel = UILabel(frame: CGRect(x:5, y: 0, width: frame.width - 10, height: frame.height/3))
@@ -124,12 +125,11 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
     }
     
     func LogoScrollerSetup(){
-        
         logoScroller.contentSize.width = logoScroller.frame.height
         logoScroller.isScrollEnabled = false
         logoScroller.isDirectionalLockEnabled = true
-        
         logoScroller.delegate = self
+        
         for index in 0 ..< Screens_logo.count {
             frame_logo.origin.x = 0
             frame_logo.origin.y = logoScroller.frame.height * CGFloat(index)
@@ -143,7 +143,6 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
             imageview.backgroundColor = UIColor.white
             self.logoScroller.addSubview(imageview)
         }
-        
         self.logoScroller.contentSize = CGSize(width: logoScroller.frame.width, height: logoScroller.frame.height * CGFloat(Screens_logo.count))
         
         logoScroller.backgroundColor = UIColor.white
@@ -157,9 +156,7 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
         let c : CGRect = CGRect(x: x, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         pageScroller.scrollRectToVisible(c, animated: true)
         updateDots(pagId:pageIndicatore.currentPage+changFlag)
-        
         changFlag = changFlag + 1
-
         if (changFlag == Screens.count + 1 ) {
             self.ActionOnnxt()
         }
@@ -170,6 +167,7 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
     }
     
     @IBAction func ActionOnbtnLogin(_ sender: UIButton) {
+        //fatalError()
         let Login_vc  = storyboard?.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         self.navigationController?.pushViewController(Login_vc, animated: true)
     }
@@ -177,9 +175,10 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
     @IBAction func ActionOnbtnSignup(_ sender: UIButton) {
         let SignUp_vc  = storyboard?.instantiateViewController(withIdentifier: "SignUpVC") as! SignUpVC
         self.navigationController?.pushViewController(SignUp_vc, animated: true)
-    }
+   }
     
-    override func viewWillLayoutSubviews() {
+    override func viewWillLayoutSubviews()
+    {
         super.viewWillLayoutSubviews();
         self.logoScroller.contentSize.width = self.logoScroller.frame.height;
     }
@@ -191,7 +190,6 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
             imgForIndicatorTwo.image = carOff
             imgForIndicatorTree.image = carOff
             imgForIndicatorFour.image = carOff
-            
         }else if pagId == 1 {
             imgForIndicatorOne.image = carOff
             imgForIndicatorTwo.image = carOn
@@ -210,7 +208,6 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
         }
         let imgName : String = Screens[pagId]
         img_bg.image = UIImage(named: imgName)
-  
         let y_logo = CGFloat(pagId) * logoScroller.frame.width
         let c_logo : CGRect = CGRect(x: 0, y: y_logo, width: logoScroller.frame.width, height: logoScroller.frame.height)
         logoScroller.scrollRectToVisible(c_logo, animated: true)
@@ -230,17 +227,17 @@ class OverViewVC: UIViewController,UIScrollViewDelegate {
         }
     }
     
-    // MARK : TO CHANGE WHILE CLICKING ON PAGE CONTROL
-    @objc func changePage(_ sender: AnyObject) {
-        let x = CGFloat(pageIndicatore.currentPage) * pageScroller.frame.size.width
-        pageScroller.setContentOffset( CGPoint(x: x, y: 0), animated: true)
-    }
-    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView == pageScroller{
             let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
             updateDots(pagId:Int(pageNumber))
         }
+    }
+    
+    // MARK : TO CHANGE WHILE CLICKING ON PAGE CONTROL
+    @objc func changePage(_ sender: AnyObject) {
+        let x = CGFloat(pageIndicatore.currentPage) * pageScroller.frame.size.width
+        pageScroller.setContentOffset( CGPoint(x: x, y: 0), animated: true)
     }
 }
 

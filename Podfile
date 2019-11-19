@@ -15,6 +15,7 @@ pod 'SDWebImage', '~> 4.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'Toast', '~> 4.0.0'
+pod "CCValidator"
 
 
   # Pods for GreenGrubBox
