@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Lato-Bold_0.ttf">
+            <string>Lato-Bold</string>
+        </array>
+        <array key="lato-reg-webfont_0.ttf">
+            <string>Lato-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="BoxHistoryCell" rowHeight="150" id="KGk-i7-Jjw" customClass="BoxHistoryCell" customModule="GreenGrubBox" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="135"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="134.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="box" translatesAutoresizingMaskIntoConstraints="NO" id="RzP-uB-TBj">
+                        <rect key="frame" x="5" y="5" width="365" height="124.5"/>
+                    </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dqT-VL-so4">
+                        <rect key="frame" x="24" y="22" width="90" height="90"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_white_box" translatesAutoresizingMaskIntoConstraints="NO" id="H7u-qn-6Li">
+                                <rect key="frame" x="2" y="2" width="86" height="66"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="987456" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wpu-Pa-3YY">
+                                <rect key="frame" x="0.0" y="70" width="90" height="20"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Wpu-Pa-3YY" secondAttribute="height" multiplier="9:2" id="Ql8-0b-VEi"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.53725490196078429" green="0.83921568627450982" blue="0.25490196078431371" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="dqT-VL-so4" secondAttribute="height" multiplier="1:1" id="3h3-pr-1Xi"/>
+                            <constraint firstAttribute="trailing" secondItem="Wpu-Pa-3YY" secondAttribute="trailing" id="AmM-8K-LEU"/>
+                            <constraint firstItem="H7u-qn-6Li" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="leading" constant="2" id="CxF-NJ-4Co"/>
+                            <constraint firstItem="Wpu-Pa-3YY" firstAttribute="top" secondItem="H7u-qn-6Li" secondAttribute="bottom" constant="2" id="OMo-9s-GG9"/>
+                            <constraint firstItem="H7u-qn-6Li" firstAttribute="top" secondItem="dqT-VL-so4" secondAttribute="top" constant="2" id="SWB-rF-gw5"/>
+                            <constraint firstAttribute="bottom" secondItem="Wpu-Pa-3YY" secondAttribute="bottom" id="mhd-JG-YBl"/>
+                            <constraint firstItem="Wpu-Pa-3YY" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="leading" id="mlP-Fa-TWH"/>
+                            <constraint firstAttribute="trailing" secondItem="H7u-qn-6Li" secondAttribute="trailing" constant="2" id="n5f-ms-BaS"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="01 / 02 /2018" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heb-6o-4Mz">
+                        <rect key="frame" x="129" y="22" width="230" height="25.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="heb-6o-4Mz" secondAttribute="height" multiplier="53:7" constant="36.928571428571445" id="gzz-ST-jmF"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="20"/>
+                        <color key="textColor" red="0.19215686274509802" green="0.22352941176470587" blue="0.26666666666666666" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vendor Name 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lRW-Ss-Syj">
+                        <rect key="frame" x="129" y="52.5" width="230" height="20.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="lRW-Ss-Syj" secondAttribute="height" multiplier="215:21" constant="20.119047619047649" id="6KW-l7-4gi"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="17"/>
+                        <color key="textColor" red="0.19215686274509802" green="0.22352941176470587" blue="0.26666666666666666" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Still with you, please return when the grubbing is done" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYt-PM-KE7">
+                        <rect key="frame" x="129" y="73" width="230" height="30.5"/>
+                        <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="13"/>
+                        <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="01/02/2018" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uON-2p-gnb">
+                        <rect key="frame" x="129" y="106" width="230" height="16"/>
+                        <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="13"/>
+                        <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="uON-2p-gnb" firstAttribute="top" secondItem="FYt-PM-KE7" secondAttribute="bottom" constant="2.5" id="5MF-bN-YbT"/>
+                    <constraint firstItem="dqT-VL-so4" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="22" id="7FR-5X-9wp"/>
+                    <constraint firstItem="RzP-uB-TBj" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="7q1-op-S81"/>
+                    <constraint firstItem="heb-6o-4Mz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="22" id="APr-U1-d30"/>
+                    <constraint firstItem="FYt-PM-KE7" firstAttribute="top" secondItem="lRW-Ss-Syj" secondAttribute="bottom" id="B0T-qQ-CFF"/>
+                    <constraint firstItem="heb-6o-4Mz" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="trailing" constant="15" id="EKq-gL-atN"/>
+                    <constraint firstAttribute="bottom" secondItem="RzP-uB-TBj" secondAttribute="bottom" constant="5" id="RJ7-0G-BrR"/>
+                    <constraint firstAttribute="trailing" secondItem="FYt-PM-KE7" secondAttribute="trailing" constant="16" id="RdN-T2-ffd"/>
+                    <constraint firstAttribute="trailing" secondItem="lRW-Ss-Syj" secondAttribute="trailing" constant="16" id="UWG-0M-2Df"/>
+                    <constraint firstAttribute="bottom" secondItem="dqT-VL-so4" secondAttribute="bottom" constant="22.5" id="WBj-bK-yj2"/>
+                    <constraint firstItem="heb-6o-4Mz" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="ZHW-5X-d90"/>
+                    <constraint firstItem="lRW-Ss-Syj" firstAttribute="top" secondItem="heb-6o-4Mz" secondAttribute="bottom" constant="5" id="bsO-rf-CbF"/>
+                    <constraint firstAttribute="trailing" secondItem="uON-2p-gnb" secondAttribute="trailing" constant="16" id="gnc-p9-6vd"/>
+                    <constraint firstItem="FYt-PM-KE7" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="trailing" constant="15" id="lLI-JH-Ddd"/>
+                    <constraint firstItem="lRW-Ss-Syj" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="trailing" constant="15" id="liy-ZS-NWR"/>
+                    <constraint firstAttribute="trailing" secondItem="RzP-uB-TBj" secondAttribute="trailing" constant="5" id="pyO-AM-Imc"/>
+                    <constraint firstItem="dqT-VL-so4" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="24" id="vbi-T0-mtR"/>
+                    <constraint firstItem="RzP-uB-TBj" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="5" id="wMw-0j-wrU"/>
+                    <constraint firstItem="uON-2p-gnb" firstAttribute="leading" secondItem="dqT-VL-so4" secondAttribute="trailing" constant="15" id="wbl-sn-asv"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="imgViewForBox" destination="RzP-uB-TBj" id="LNP-iE-6t2"/>
+                <outlet property="imgViewForItemBox" destination="H7u-qn-6Li" id="DpE-tV-o7y"/>
+                <outlet property="lblForDate" destination="heb-6o-4Mz" id="5hS-HV-24x"/>
+                <outlet property="lblForItemNumber" destination="Wpu-Pa-3YY" id="riR-fh-oIX"/>
+                <outlet property="lblForStillWithTou" destination="FYt-PM-KE7" id="Hfg-Eg-C2v"/>
+                <outlet property="lblForVendorName" destination="lRW-Ss-Syj" id="CuO-Y2-K3N"/>
+                <outlet property="lbl_returnTime" destination="uON-2p-gnb" id="wPP-dF-3BK"/>
+                <outlet property="view_box" destination="dqT-VL-so4" id="6GV-Dw-b4m"/>
+            </connections>
+            <point key="canvasLocation" x="25.5" y="16.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="box" width="367" height="133"/>
+        <image name="login_white_box" width="318" height="352"/>
+    </resources>
+</document>

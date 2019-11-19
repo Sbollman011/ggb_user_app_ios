@@ -1,0 +1,101 @@
+PODS:
+  - Alamofire (4.6.0)
+  - Crashlytics (3.10.0):
+    - Fabric (~> 1.7.3)
+  - DropDown (2.3.1)
+  - Fabric (1.7.3)
+  - Firebase/Core (4.8.2):
+    - FirebaseAnalytics (= 4.0.9)
+    - FirebaseCore (= 4.0.14)
+  - Firebase/Messaging (4.8.2):
+    - Firebase/Core
+    - FirebaseMessaging (= 2.0.8)
+  - FirebaseAnalytics (4.0.9):
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - nanopb (~> 0.3)
+  - FirebaseCore (4.0.14):
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseInstanceID (2.0.8):
+    - FirebaseCore (~> 4.0)
+  - FirebaseMessaging (2.0.8):
+    - FirebaseAnalytics (~> 4.0)
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.1)
+  - GoogleToolboxForMac/Defines (2.1.3)
+  - GoogleToolboxForMac/Logger (2.1.3):
+    - GoogleToolboxForMac/Defines (= 2.1.3)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.3)":
+    - GoogleToolboxForMac/Defines (= 2.1.3)
+  - IQKeyboardManager (5.0.3)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - PKHUD (4.2.3)
+  - Protobuf (3.5.0)
+  - SDWebImage (4.3.0):
+    - SDWebImage/Core (= 4.3.0)
+  - SDWebImage/Core (4.3.0)
+  - Stripe (12.0.0)
+  - Toast (4.0.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.4)
+  - Crashlytics
+  - DropDown
+  - Fabric
+  - Firebase/Core
+  - Firebase/Messaging
+  - IQKeyboardManager (= 5.0.3)
+  - PKHUD (~> 4.0)
+  - SDWebImage (~> 4.0)
+  - Stripe
+  - Toast (~> 4.0.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - Crashlytics
+    - DropDown
+    - Fabric
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - FirebaseMessaging
+    - GoogleToolboxForMac
+    - IQKeyboardManager
+    - nanopb
+    - PKHUD
+    - Protobuf
+    - SDWebImage
+    - Stripe
+    - Toast
+
+SPEC CHECKSUMS:
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  Crashlytics: a989ef242b66605577a425733797f810bd2725eb
+  DropDown: 20499c7b2731b0d21609af924e47c7677a2be50d
+  Fabric: bb495bb9a7a7677c6d03a1f8b83d95bc49b47e41
+  Firebase: 7d3b8cd837ad9fcd391657734c0d56dab8e9a5a3
+  FirebaseAnalytics: 388b630c15713f5dbf364071f5f3d6077fb52f4e
+  FirebaseCore: 2e0b98fb2d64ca8140136beff15772bdd14d2dd7
+  FirebaseInstanceID: 81df5805a08001e69138664bdd02c6719a9ac80f
+  FirebaseMessaging: dfdcd307c2382290a1e297a81d0f18370f5b1bcd
+  GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
+  IQKeyboardManager: dc5b18b47e5170e4d150bb86dbee8c8a2fc48997
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  PKHUD: c7692163a09875cbf15827dc581df3c5cf7f1015
+  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  SDWebImage: 6da6c8bca115addc4de8613362e1b15f66333825
+  Stripe: c1c4828adf3e078fb08ff56cd93f410c54011c54
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+
+PODFILE CHECKSUM: 16a00cad0b257791d369d3eaa7f7e7085a61d41a
+
+COCOAPODS: 1.6.1
